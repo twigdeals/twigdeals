@@ -44,11 +44,11 @@ def norm_curve(c):
 
 CSS = open(ROOT / "static/site.css").read()
 
-LOGO = """<svg class="mark" viewBox="0 0 168 32" aria-label="Twig Deals" role="img"><path d="M2 25 L22 25 L30 6" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="square"/><text x="38" y="25" font-family="Barlow Condensed" font-weight="800" font-size="27" letter-spacing=".5" fill="currentColor">TWIG</text><text x="96" y="25" font-family="Barlow Condensed" font-weight="800" font-size="27" letter-spacing=".5" fill="#E2231A">DEALS</text></svg>"""
+LOGO = """<span class="logo-lock"><img class="wm" src="/wordmark.svg" alt="Twig Deals" width="883" height="547"></span>"""
 
 def page(title, body, desc=""):
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{e(title)}</title><meta name="description" content="{e(desc or TAGLINE)}"><meta name="theme-color" content="#0E0F11"><meta property="og:type" content="website"><meta property="og:site_name" content="Twig Deals"><meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc or TAGLINE)}"><meta property="og:image" content="https://twigdeals.com/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://twigdeals.com/og.png">
+<title>{e(title)}</title><meta name="description" content="{e(desc or TAGLINE)}"><meta name="theme-color" content="#0E0F11"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta property="og:type" content="website"><meta property="og:site_name" content="Twig Deals"><meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc or TAGLINE)}"><meta property="og:image" content="https://twigdeals.com/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://twigdeals.com/og.png">
 <link rel="preload" href="/fonts/BarlowCondensed-800.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/style.css"></head><body>
 <header class="top"><div class="w bar"><a class="logo" href="/">{LOGO}</a><nav><a href="/sticks/">Sticks</a><a href="/curves/">Curve + flex</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">Sale calendar</a><a class="nav-cta" href="#newsletter">Weekly drops</a></nav></div></header>
 <main>{body}{NEWSLETTER}</main><footer><div class="w foot"><div>{LOGO}<p>Hockey stick price tracker. Prices are pulled from retailer sites twice a day and can change; confirm on the store page before you buy. Some links earn us a commission at no cost to you. CAD and USD are shown as listed, not converted.</p></div><div class="flinks"><a href="/sticks/">All sticks</a><a href="/curves/">Curve + flex</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">When sticks go on sale</a></div></div></footer></body></html>"""
@@ -96,7 +96,7 @@ def chart(series):
 def main():
     if OUT.exists(): shutil.rmtree(OUT)
     OUT.mkdir()
-    (OUT / "style.css").write_text(open(ROOT/"static/fonts/fonts.css").read() + CSS); shutil.copytree(ROOT/"static/fonts", OUT/"fonts", dirs_exist_ok=True); shutil.copy(ROOT/"static/og.png", OUT/"og.png")
+    (OUT / "style.css").write_text(open(ROOT/"static/fonts/fonts.css").read() + CSS); shutil.copytree(ROOT/"static/fonts", OUT/"fonts", dirs_exist_ok=True); shutil.copy(ROOT/"static/og.png", OUT/"og.png"); [shutil.copy(ROOT/"static"/f, OUT/f) for f in ("favicon.ico","favicon-32.png","apple-touch-icon.png","icon-512.png","wordmark.svg")]
     db = sqlite3.connect(ROOT / "data/prices.db"); db.row_factory = sqlite3.Row
     last_ts = db.execute("SELECT max(last_seen) FROM variants").fetchone()[0]
     vs = {r["id"]: dict(r) for r in db.execute("SELECT * FROM variants")}
