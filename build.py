@@ -98,7 +98,7 @@ def chart(series):
 def main():
     if OUT.exists(): shutil.rmtree(OUT)
     OUT.mkdir()
-    (OUT / "style.css").write_text(open(ROOT/"static/fonts/fonts.css").read() + CSS); shutil.copytree(ROOT/"static/fonts", OUT/"fonts", dirs_exist_ok=True); shutil.copy(ROOT/"static/og.png", OUT/"og.png"); [shutil.copy(ROOT/"static"/f, OUT/f) for f in ("favicon.ico","favicon-32.png","apple-touch-icon.png","icon-512.png","wordmark.svg")]
+    (OUT / "style.css").write_text(open(ROOT/"static/fonts/fonts.css").read() + CSS); shutil.copytree(ROOT/"static/fonts", OUT/"fonts", dirs_exist_ok=True); shutil.copy(ROOT/"static/og.png", OUT/"og.png"); [shutil.copy(ROOT/"static"/f, OUT/f) for f in ("favicon.ico","favicon-32.png","apple-touch-icon.png","icon-512.png","wordmark.svg","wordmark-email.png")]
     db = sqlite3.connect(ROOT / "data/prices.db"); db.row_factory = sqlite3.Row
     last_ts = db.execute("SELECT max(last_seen) FROM variants").fetchone()[0]
     vs = {r["id"]: dict(r) for r in db.execute("SELECT * FROM variants")}
