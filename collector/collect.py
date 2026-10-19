@@ -14,6 +14,7 @@ STORES = [
     dict(id="prohockeylife", name="Pro Hockey Life", base="https://www.prohockeylife.com", currency="CAD"),
     dict(id="sourceforsports", name="Source for Sports", base="https://www.sourceforsports.ca", currency="CAD"),
     dict(id="hockeystickman", name="HockeyStickMan", base="https://www.hockeystickman.com", currency="USD"),
+    dict(id="justhockey", name="Just Hockey", base="https://www.justhockeytoronto.com", currency="CAD"),
     dict(id="discounthockey", name="Discount Hockey", base="https://discounthockey.com", currency="USD"),
     dict(id="thehockeyshop", name="TheHockeyShop.com", base="https://www.thehockeyshop.com", currency="CAD"),
     dict(id="hockeytron", name="HockeyTron", base="https://hockeytron.com", currency="USD"),
@@ -21,10 +22,11 @@ STORES = [
 ]
 MAX_PAGES = 100  # TheHockeyShop is ~56 pages of 250
 EXCLUDE = re.compile(r"\b(mini|tape|wax|bag|rack|grip tape|blade only|replacement blade|street|ball hockey|goalie|knob|plug|extension|pants|gloves?|skates?|helmet|tee|hoodie|polo|shirt|sock|pucks?|toe system|holder|goal|ringette|lacrosse|field hockey|floorball|floor hockey|dek|roller|inline|in-line|custom|quick turn|tyke|blades?)\b|(?<!top )\bshafts?\b|^mybauer", re.I)
-# Store spellings that differ from the seed list (e.g. "FLYLTE", "PROTO 2").
+# Store spellings that differ from the seed list (Just Hockey: "FLYLTE", "PROTO 2").
 # "Super Tacks AS-V" is CCM's full name for the seed's "Tacks AS-V".
 ALIASES = [(re.compile(r"\bflylte\b", re.I), "FlyLite"), (re.compile(r"\bproto 2\b", re.I), "Proto2"),
-           (re.compile(r"\bsuper tacks (as-v)\b(?!i)", re.I), r"Tacks \1")]
+           (re.compile(r"\bsuper tacks (as-v)\b(?!i)", re.I), r"Tacks \1"),
+           (re.compile(r"\bAS (\d{3})\b", re.I), r"AS\1")]  # "AS 570" = "AS570"
 
 def has_model(model, title):
     """Model name in title as its own word. A glued digit or single letter is a sub-model that
@@ -54,7 +56,7 @@ def load_models():
 
 def slug(s): return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
 
-TIER_WORDS = ["top shaft", "pro", "team", "elite", "strike", "rev", "plus", "max", "unleashed", "legend", "morph", "xt", "2", "3", "4", "5"]
+TIER_WORDS = ["top shaft", "pro", "team", "elite", "strike", "rev", "plus", "max", "unleashed", "legend", "morph", "xt", "proto r", "vector", "2", "3", "4", "5"]
 
 def tier_name(model, title):
     """Base seed model + sub-tier from the product title, e.g. Code Encrypt -> Code Encrypt 4 / Code Encrypt Pro,
@@ -81,7 +83,7 @@ def tier_name(model, title):
         w = next((w for w in TIER_WORDS if r.startswith(w) and (len(r) == len(w) or not r[len(w)].isalnum())), None)
         if w == "pro" and re.match(r"pro[ -](stock|return)", r): w = None  # "Pro Stock" is not the Pro tier
         if not w: break
-        word = w.upper() if w.isdigit() or w == "xt" else w.title()
+        word = {"xt": "XT", "proto r": "Proto R"}.get(w, w.upper() if w.isdigit() else w.title())
         if not name.endswith(" " + word): name += " " + word
         rest = rest.lstrip(" -")[len(w):]
     # "Super Novium" (2022) is an older line than "Novium"
@@ -104,7 +106,13 @@ def opt(product, variant, pattern):
     return None
 
 def specs(p, v):
-    hand, flex, curve = opt(p, v, r"hand|side"), opt(p, v, r"flex"), opt(p, v, r"curve|pattern|blade")
+    hand, flex, curve = opt(p, v, r"hand|side"), opt(p, v, r"flex|^lex$"), opt(p, v, r"curve|pattern|blade")  # "LEX": Just Hockey typo
+    if not (hand and flex and curve):  # Just Hockey: a generic "OPTION" holding "LEFT" or "LEFT : TC4 : 75"
+        for val in (v.get("option1"), v.get("option2"), v.get("option3")):
+            m = re.fullmatch(r"\s*(LEFT|RIGHT)\s*(?::\s*([^:]+?)\s*:\s*(\d{2,3}))?\s*", val or "", re.I)
+            if m:
+                hand = hand or m.group(1)
+                if m.group(2): curve, flex = curve or m.group(2), flex or m.group(3)
     combo = opt(p, v, r"spec")  # e.g. HockeyStickMan: "Right - P28 (McDavid) - 65 Flex/58\" (Blade 6)"
     if combo and not (hand or flex or curve):
         m = re.match(r"\s*(Left|Right)\s*-\s*([^-(]+?)\s*(?:\([^)]*\))?\s*-\s*(\d{2,3})\s*Flex", combo, re.I)

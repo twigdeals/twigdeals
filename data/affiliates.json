@@ -1,9 +1,10 @@
 {
-  "_note": "Per-store affiliate link templates. {url} = product URL (URL-encoded as {url_enc}). Empty = plain link.",
+  "_note": "Per-store affiliate link templates. {url} = product URL (URL-encoded as {url_enc}). Empty = plain link. Just Hockey is on AvantLink; add its template only after approval.",
   "bauer": "",
   "prohockeylife": "",
   "sourceforsports": "",
   "hockeystickman": "",
+  "justhockey": "",
   "discounthockey": "",
   "thehockeyshop": "",
   "hockeytron": "",

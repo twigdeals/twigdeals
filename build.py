@@ -18,6 +18,7 @@ STORES = [
     ("prohockeylife", "Pro Hockey Life", "https://www.prohockeylife.com", "CAD"),
     ("sourceforsports", "Source for Sports", "https://www.sourceforsports.ca", "CAD"),
     ("hockeystickman", "HockeyStickMan", "https://www.hockeystickman.com", "USD"),
+    ("justhockey", "Just Hockey", "https://www.justhockeytoronto.com", "CAD"),
     ("discounthockey", "Discount Hockey", "https://discounthockey.com", "USD"),
     ("thehockeyshop", "TheHockeyShop.com", "https://www.thehockeyshop.com", "CAD"),
     ("hockeytron", "HockeyTron", "https://hockeytron.com", "USD"),
