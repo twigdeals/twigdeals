@@ -61,6 +61,8 @@ def spark(vals, w=96, h=24):
     return f'<svg class="spark" viewBox="0 0 {w} {h}" width="{w}" height="{h}"><polyline points="{pts}" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>'
 
 def write(path, content):
+    canon = "https://twigdeals.com" + ("/" if path in ("", "/") else "/" + path.strip("/") + "/")
+    content = content.replace("</title>", f'</title><link rel="canonical" href="{canon}">', 1)
     p = OUT / path.strip("/") / "index.html" if not path.endswith(".css") else OUT / path
     p.parent.mkdir(parents=True, exist_ok=True); p.write_text(content)
 
