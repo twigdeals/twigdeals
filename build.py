@@ -12,7 +12,18 @@ STOCK_UNKNOWN = {"sourceforsports"}  # feed reports every variant available; not
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "dist"
 AFF = json.load(open(ROOT / "data/affiliates.json"))
-STORE_NAMES = {"bauer": "Bauer.com", "prohockeylife": "Pro Hockey Life", "sourceforsports": "Source for Sports", "hockeystickman": "HockeyStickMan"}
+# id, display name, home page, currency the store lists in. Order = order on the About page and footer.
+STORES = [
+    ("bauer", "Bauer.com", "https://www.bauer.com", "USD"),
+    ("prohockeylife", "Pro Hockey Life", "https://www.prohockeylife.com", "CAD"),
+    ("sourceforsports", "Source for Sports", "https://www.sourceforsports.ca", "CAD"),
+    ("hockeystickman", "HockeyStickMan", "https://www.hockeystickman.com", "USD"),
+    ("discounthockey", "Discount Hockey", "https://discounthockey.com", "USD"),
+    ("thehockeyshop", "TheHockeyShop.com", "https://www.thehockeyshop.com", "CAD"),
+    ("hockeytron", "HockeyTron", "https://hockeytron.com", "USD"),
+    ("sportsexcellence", "Sports Excellence", "https://sportsexcellence.com", "CAD"),
+]
+STORE_NAMES = {i: n for i, n, _, _ in STORES}
 # Beehiiv subscribe page. Change only here if the subdomain is renamed.
 BEEHIIV_BASE_URL = "https://twigdeals.beehiiv.com"
 BEEHIIV_SUBSCRIBE_URL = BEEHIIV_BASE_URL + "/subscribe"
@@ -33,6 +44,7 @@ FX = fx_rate()
 def usd(p, c): return p if c == "USD" else (p / FX["usdcad"] if FX["usdcad"] else None)
 
 def slug(s): return re.sub(r"[^a-z0-9]+", "-", (s or "").lower()).strip("-")
+def cslug(c): return slug((c or "").replace("+", " plus "))  # "P28+" must not share a URL with "P28"
 def money(p, c): return f"${p:,.2f} {c}"
 def aff(store, url):
     t = AFF.get(store) or ""
@@ -53,7 +65,7 @@ def page(title, body, desc=""):
 <title>{e(title)}</title><meta name="description" content="{e(desc or TAGLINE)}"><meta name="theme-color" content="#0E0F11"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta property="og:type" content="website"><meta property="og:site_name" content="Twig Deals"><meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc or TAGLINE)}"><meta property="og:image" content="https://twigdeals.com/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://twigdeals.com/og.png">
 <link rel="preload" href="/fonts/BarlowCondensed-800.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/style.css?v={CSS_V}"></head><body>
 <header class="top"><div class="w bar"><a class="logo" href="/">{LOGO}</a><nav><a href="/sticks/">Sticks</a><a href="/curves/">Curve + flex</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">Sale calendar</a><a class="nav-cta" href="#newsletter">Weekly drops</a></nav></div></header>
-<main>{body}{NEWSLETTER}</main><footer><div class="w foot"><div>{LOGO}<p>Hockey stick price tracker. Prices are pulled from retailer sites twice a day and can change; confirm on the store page before you buy. Some links earn us a commission at no cost to you. CAD and USD are shown as listed, not converted.</p></div><div class="flinks"><a href="/sticks/">All sticks</a><a href="/curves/">Curve + flex</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">When sticks go on sale</a></div></div></footer></body></html>"""
+<main>{body}{NEWSLETTER}</main><footer><div class="w foot"><div>{LOGO}<p>Hockey stick price tracker. Prices are pulled from retailer sites twice a day and can change; confirm on the store page before you buy. Some links earn us a commission at no cost to you. CAD and USD are shown as listed, not converted.</p><p>Stores tracked: {e(", ".join(n for _, n, _, _ in STORES))}.</p></div><div class="flinks"><a href="/sticks/">All sticks</a><a href="/curves/">Curve + flex</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">When sticks go on sale</a><a href="/about/">About + stores</a></div></div></footer></body></html>"""
 
 NEWSLETTER = f"""<section class="nl" id="newsletter"><div class="w nl-in"><div><p class="kicker">Every Thursday</p><h2>The drop sheet.</h2><p>One email. The biggest real price cuts on senior and intermediate twigs, sorted by curve and flex. No fluff.</p></div>
 <!-- NEWSLETTER: Beehiiv free plan, no API. The subscribe page doesn't prefill ?email= (checked Oct 19, 2026), so this is a plain link. -->
@@ -133,7 +145,7 @@ def main():
         if v["curve_n"] and v["flex"] and v["size"] and re.fullmatch(r"\d{2,3}", v["flex"].strip()):
             combos[(v["curve_n"], v["flex"].strip(), v["size"])].append(v)
     combos = {k: vl for k, vl in combos.items() if len(vl) >= 4}
-    POPULAR = sorted(((f"/curves/{slug(c)}-{f}-flex-{slug(sz)}/", f"{c} · {f} · {sz[:3].upper()}") for (c,f,sz),vl in combos.items() if sz=="Senior"), key=lambda t: -len(combos[next(k for k in combos if f"/curves/{slug(k[0])}-{k[1]}-flex-{slug(k[2])}/"==t[0])]))
+    POPULAR = sorted(((f"/curves/{cslug(c)}-{f}-flex-{slug(sz)}/", f"{c} · {f} · {sz[:3].upper()}") for (c,f,sz),vl in combos.items() if sz=="Senior"), key=lambda t: -len(combos[next(k for k in combos if f"/curves/{cslug(k[0])}-{k[1]}-flex-{slug(k[2])}/"==t[0])]))
     # Homepage: best in-stock drop per model, new (non-pro-stock) sticks only
     best = {}
     for v in live:
@@ -202,7 +214,7 @@ def main():
 
     links = []
     for (c, f, sz), vl in sorted(combos.items()):
-        path = f"/curves/{slug(c)}-{f}-flex-{slug(sz)}/"; links.append((path, f"{c} {f} flex {sz}"))
+        path = f"/curves/{cslug(c)}-{f}-flex-{slug(sz)}/"; links.append((path, f"{c} {f} flex {sz}"))
         inst = sorted([v for v in vl if v["available"]], key=lambda v: v["price"])
         body = f'''<div class="w page"><p class="crumb"><a href="/curves/">Curve + flex</a></p><h1>{e(c)} {e(f)} flex {e(sz.lower())} hockey sticks: best prices</h1>
 <p class="sub">{len(inst)} in-stock options across {len({v["model_slug"] for v in inst})} models, cheapest first. Prices in original currency.</p><ol class="deals">{"".join(card(v) for v in inst[:30]) or "<li>Nothing in stock right now.</li>"}</ol></div>'''
@@ -220,6 +232,16 @@ Sources: <a href="https://www.reddit.com/r/hockeyplayers/comments/szj2o9/best_ti
 <h2>4. Buy last year's flagship or pro stock</h2><p>Many players aim for $150–$250 by buying the previous flagship on clearance or pro stock sticks instead of paying $350–$400+ for the newest model (same threads as above).</p>
 <h2>How to use Twig Deals</h2><p>Open your stick's page to see current prices by curve, flex and hand at every tracked store, along with the lowest price we've seen. Or browse <a href="/curves/">by curve and flex</a>. Sign up below for the weekly deals email.</p></article>"""
     write("/guides/when-do-hockey-sticks-go-on-sale/", page(f"When do hockey sticks go on sale? | {SITE}", guide, "When hockey sticks go on sale: new-model launches, summer clearance and holiday sales, with sources."))
+    # About: what we track and how. TwigDealsBot's user agent points here.
+    srows = "".join(f'<li><a href="{e(u)}" rel="noopener"><span>{c}</span> {e(n)}</a></li>' for i, n, u, c in STORES)
+    about = f"""<article class="w page prose"><p class="kicker">About</p><h1>How Twig Deals works</h1>
+<p class="lede">Twig Deals tracks player hockey stick prices at {len(STORES)} stores, curve by curve and flex by flex, and keeps the history so you can see what actually dropped.</p>
+<h2>Stores we track</h2><p>Prices are shown in the currency each store lists. On stick pages, the headline lowest-price figures convert CAD to USD at the Bank of Canada rate so stores can be compared.</p>
+<ul class="index">{srows}</ul>
+<h2>What we collect</h2><p>Senior, intermediate, junior and youth player sticks from the models in our index. Goalie sticks, blades, shafts, tape and accessories are left out. Pro stock and used sticks are tagged and never count toward the lowest-ever price.</p>
+<h2>How we collect</h2><p>Twice a day, our collector reads each store's public product feed. It identifies itself as TwigDealsBot, checks the store's robots.txt first, and waits between requests. A store that asks us not to read its feed is skipped.</p>
+<h2>Links</h2><p>Store links go straight to the product page. Some links may earn us a commission at no cost to you; that never changes the order or the prices we show. Prices change quickly, so confirm on the store page before you buy.</p></article>"""
+    write("/about/", page(f"About Twig Deals and the stores we track | {SITE}", about, f"How Twig Deals tracks hockey stick prices at {len(STORES)} stores: {', '.join(n for _, n, _, _ in STORES)}."))
     (OUT / "robots.txt").write_text("User-agent: *\nAllow: /\nSitemap: https://twigdeals.com/sitemap.xml\n")
     urls = [str(p.parent.relative_to(OUT)) for p in OUT.rglob("index.html")]
     (OUT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
