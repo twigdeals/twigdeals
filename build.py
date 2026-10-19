@@ -13,6 +13,8 @@ ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "dist"
 AFF = json.load(open(ROOT / "data/affiliates.json"))
 STORE_NAMES = {"bauer": "Bauer.com", "prohockeylife": "Pro Hockey Life", "sourceforsports": "Source for Sports", "hockeystickman": "HockeyStickMan"}
+# Beehiiv subscribe page. Change only here if the subdomain is renamed.
+BEEHIIV_SUBSCRIBE_URL = "https://scotts-newsletter-999439.beehiiv.com/subscribe"
 SITE = "Twig Deals"; TAGLINE = "Twig Deals: hockey stick price tracker"
 e = html.escape
 
@@ -50,9 +52,9 @@ def page(title, body, desc=""):
 <header class="top"><div class="w bar"><a class="logo" href="/">{LOGO}</a><nav><a href="/sticks/">Sticks</a><a href="/curves/">Curve + flex</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">Sale calendar</a><a class="nav-cta" href="#newsletter">Weekly drops</a></nav></div></header>
 <main>{body}{NEWSLETTER}</main><footer><div class="w foot"><div>{LOGO}<p>Hockey stick price tracker. Prices are pulled from retailer sites twice a day and can change; confirm on the store page before you buy. Some links earn us a commission at no cost to you. CAD and USD are shown as listed, not converted.</p></div><div class="flinks"><a href="/sticks/">All sticks</a><a href="/curves/">Curve + flex</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">When sticks go on sale</a></div></div></footer></body></html>"""
 
-NEWSLETTER = """<section class="nl" id="newsletter"><div class="w nl-in"><div><p class="kicker">Every Thursday</p><h2>The drop sheet.</h2><p>One email. The biggest real price cuts on senior and intermediate twigs, sorted by curve and flex. No fluff.</p></div>
-<!-- NEWSLETTER_EMBED: swap this form for the Beehiiv/Kit embed once the account exists -->
-<form class="nl-form" onsubmit="this.querySelector('button').textContent='Coming soon';return false"><label class="sr" for="em">Email</label><input id="em" type="email" placeholder="you@email.com" required><button>Get the sheet</button></form></div></section>"""
+NEWSLETTER = f"""<section class="nl" id="newsletter"><div class="w nl-in"><div><p class="kicker">Every Thursday</p><h2>The drop sheet.</h2><p>One email. The biggest real price cuts on senior and intermediate twigs, sorted by curve and flex. No fluff.</p></div>
+<!-- NEWSLETTER: Beehiiv free plan, no API. The subscribe page doesn't prefill ?email= (checked Oct 19, 2026), so this is a plain link. -->
+<div class="nl-cta"><a class="nl-btn" href="{BEEHIIV_SUBSCRIBE_URL}" rel="noopener">Get the drop sheet <span aria-hidden="true">→</span></a><p class="nl-fine">Free. Sign up on our Beehiiv page. Unsubscribe anytime.</p></div></div></section>"""
 
 def spark(vals, w=96, h=24):
     if len(vals) < 2: return '<span class="spark-na">1st check</span>'
