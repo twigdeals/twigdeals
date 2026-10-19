@@ -14,7 +14,8 @@ OUT = ROOT / "dist"
 AFF = json.load(open(ROOT / "data/affiliates.json"))
 STORE_NAMES = {"bauer": "Bauer.com", "prohockeylife": "Pro Hockey Life", "sourceforsports": "Source for Sports", "hockeystickman": "HockeyStickMan"}
 # Beehiiv subscribe page. Change only here if the subdomain is renamed.
-BEEHIIV_SUBSCRIBE_URL = "https://scotts-newsletter-999439.beehiiv.com/subscribe"
+BEEHIIV_BASE_URL = "https://twigdeals.beehiiv.com"
+BEEHIIV_SUBSCRIBE_URL = BEEHIIV_BASE_URL + "/subscribe"
 SITE = "Twig Deals"; TAGLINE = "Twig Deals: hockey stick price tracker"
 e = html.escape
 
