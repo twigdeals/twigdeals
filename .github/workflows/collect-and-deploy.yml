@@ -11,11 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     env:
       HAS_CF: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
-    timeout-minutes: 45
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
+      - name: Install Pillow (product photos)
+        run: pip install pillow
       - name: Sync to latest main (fresh price history)
         run: git pull --ff-only origin main
       - name: Collect prices
@@ -28,8 +30,14 @@ jobs:
           git commit -m "prices: $(date -u +%FT%TZ)" || echo "no changes"
           git pull --rebase -X theirs origin main
           git push
-      - name: Build site
+      - name: Build site (also fetches photos for new models)
         run: python build.py
+      - name: Commit new product photos
+        run: |
+          git add static/img data/images.json
+          git commit -m "photos: $(date -u +%FT%TZ)" || echo "no new photos"
+          git pull --rebase -X theirs origin main
+          git push
       - name: Deploy to Cloudflare Pages
         if: env.HAS_CF == 'true'
         uses: cloudflare/wrangler-action@v3

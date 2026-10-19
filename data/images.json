@@ -1,0 +1,1202 @@
+{
+ "bauer-ag5nt": {
+  "file": "/img/models/bauer-ag5nt.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/agentstick_1_f67cc3b6-0560-4a4b-a283-cd493c2be273.jpg?v=1750219120"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-bauer-ag5nt-senior-hockey-stick-1221729277.jpg?v=1777290594",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "bauer-ag5nt-proto-r": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0013/8808/5351/files/1062511_HOL23_STICK_PROTOR_SR_RETAIL-render-4.jpg?v=1697125476",
+   "https://cdn.shopify.com/s/files/1/0013/8808/5351/files/1062511_HOL23_STICK_PROTOR_SR_RETAIL-render-4_2a73d693-e0cd-4c3a-88ed-0f57868e2d64.jpg?v=1697125719",
+   "https://cdn.shopify.com/s/files/1/0013/8808/5351/files/1062511_HOL23_STICK_PROTOR_SR_RETAIL-render-4_5e7b33f1-920b-42d5-b1f9-afd2bc2ac71b.jpg?v=1697126046"
+  ]
+ },
+ "bauer-bauer-x": {
+  "file": "/img/models/bauer-bauer-x.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0606/2758/3214/files/BauerX-Stick-Senior_5631f8d2-b9fa-4340-8db1-3085e7616473.png?v=1757604182"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/BAUER-X-SR.1.1_3147012c-b331-4231-aff2-dbe668149d90.jpg?v=1750234386",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "bauer-bauer-x-900": {
+  "file": "/img/models/bauer-bauer-x-900.webp",
+  "h": 5104,
+  "rejected": [],
+  "size": "Junior",
+  "src": "https://cdn.shopify.com/s/files/1/0013/8808/5351/products/17013810-pic01.jpg?v=1571611679",
+  "store": "justhockey",
+  "w": 778
+ },
+ "bauer-nexus-geo": {
+  "file": "/img/models/bauer-nexus-geo.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/nexus-geo-hockey-stick_5_1.jpg?v=1750190180",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "bauer-nexus-sync": {
+  "file": "/img/models/bauer-nexus-sync.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/nexussync_4.jpg?v=1750215136",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "bauer-nexus-tracer": {
+  "file": "/img/models/bauer-nexus-tracer.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0606/2758/3214/files/NEXUS_STICK_TRACER_SR_351x428_811b4a44-6fd2-430b-9712-a402b903753b.png?v=1775749465"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0552/3217/files/1063695_BTH24_STICK_NEXUS_TRACER_BLK-B-LH.jpg?v=1748358710",
+  "store": "discounthockey",
+  "w": 800
+ },
+ "bauer-proto2": {
+  "file": "/img/models/bauer-proto2.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/1065317_HOL25_STICK_PROTO2_SR_front.jpg?v=1755188477",
+   "https://cdn.shopify.com/s/files/1/0606/2758/3214/files/Proto2dark__1.png?v=1775749538",
+   "https://cdn.shopify.com/s/files/1/0606/2758/3214/files/proto2white__1_2793ebc1-1d1d-4ba5-9183-ea00cb0ad8d4.png?v=1775749531"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0552/3217/files/1066180_HOL25_STICK_PROTO2_SR_WHT_front_REV.jpg?v=1755189644",
+  "store": "discounthockey",
+  "w": 800
+ },
+ "bauer-pulse": {
+  "file": "/img/models/bauer-pulse.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0606/2758/3214/files/Pulse_1_fee21c27-85a8-45af-9f80-75bebb8b5d16.png?v=1775749546"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0552/3217/files/1065662_HOL25_STICK_PULSE_SR_catalog-front.jpg?v=1760490034",
+  "store": "discounthockey",
+  "w": 800
+ },
+ "bauer-pulse-2": {
+  "file": "/img/models/bauer-pulse-2.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0606/2758/3214/files/Pulse2_Blk_7dbf9be9-57d9-48c1-a5b0-84f047a1bbf4.png?v=1788200199",
+   "https://cdn.shopify.com/s/files/1/0606/2758/3214/files/Pulse2_White_9cca522e-079e-426d-a2f6-018ee4c5bddc.png?v=1788200203"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0552/3217/files/1067638_HOL26_STICK_PULSE2_SR_14001_web.jpg?v=1788461577",
+  "store": "discounthockey",
+  "w": 800
+ },
+ "bauer-vapor-flylite": {
+  "file": "/img/models/bauer-vapor-flylite.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/1064890_BTH25_STICK_VAPOR_FLYLITE_SR_catalog-front.jpg?v=1750261682",
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/fly_black_main.jpg?v=1781309021",
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/fly_glacier_main.jpg?v=1781309071",
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/fly_red_main.jpg?v=1781308988",
+   "https://cdn.shopify.com/s/files/1/0606/2758/3214/files/VaporFlylite-SR-PLP-Image_e2b8636b-8598-404e-aa10-03ac78b6beee.png?v=1775749522"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/3_cb698e94-49ac-4f84-835c-e97d885a5d0a.jpg?v=1779286726",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "bauer-vapor-hyperlite": {
+  "file": "/img/models/bauer-vapor-hyperlite.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/1059167_2_067af53a-0ae9-40fe-94d4-575c79b4a468.jpg?v=1750205575",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "bauer-vapor-hyperlite-2": {
+  "file": "/img/models/bauer-vapor-hyperlite-2.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/VAPORHL2_B_BLK-2.jpg?v=1750244461",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "bauer-vapor-x4": {
+  "file": "/img/models/bauer-vapor-x4.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/X4.1.1_1b3e8a87-4200-49a7-b305-2f998ddbddbf.jpg?v=1750234355",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "bauer-vapor-x5-pro": {
+  "file": "/img/models/bauer-vapor-x5-pro.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/X5-PRO.1.1_157c64ac-3a89-4313-b707-71411f59a1b5.jpg?v=1750234367",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "ccm-jetspeed-ft6": {
+  "file": "/img/models/ccm-jetspeed-ft6.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSFT6_01.jpg?v=1750234122"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-jetspeed-ft6-senior-hockey-stick-1221724402.jpg?v=1774152208",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "ccm-jetspeed-ft6-pro": {
+  "file": "/img/models/ccm-jetspeed-ft6-pro.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSFT6PCB_01.jpg?v=1750234066",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSFT6PCC_01.jpg?v=1750234090",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSFT6PCG_01.jpg?v=1750234107",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/hsft6p_01_2_98cc8049-1ca3-41cd-b917-246db22c6c28.jpg?v=1750230242"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-jetspeed-ft6-pro-senior-hockey-stick-1221724422.jpg?v=1777594406",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "ccm-jetspeed-ft6-team": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0314/1049/files/FT6Team.png?v=1691082207"
+  ]
+ },
+ "ccm-jetspeed-ft660": {
+  "file": "/img/models/ccm-jetspeed-ft660.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSJ660_01.jpg?v=1750234193"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-jetspeed-ft660-senior-hockey-stick-1221724428.jpg?v=1777594329",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "ccm-jetspeed-ft670": {
+  "file": "/img/models/ccm-jetspeed-ft670.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSJ670_01.jpg?v=1750234166"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-jetspeed-ft670-senior-hockey-stick-1221724391.jpg?v=1777594479",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "ccm-jetspeed-ft7": {
+  "file": "/img/models/ccm-jetspeed-ft7.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSFT7-SR-RIGHT_01.jpg?v=1750242595"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-jetspeed-ft7-senior-hockey-stick-1221793589.jpg?v=1777685742",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "ccm-jetspeed-ft7-pro": {
+  "file": "/img/models/ccm-jetspeed-ft7-pro.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSFT7P-SR_01.jpg?v=1750242631",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "ccm-jetspeed-ft8": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-jetspeed-ft8-senior-hockey-stick-1257013817.jpg?v=1788487119",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-jetspeed-ft8-senior-hockey-stick-long-63-1257013863.jpg?v=1788487110",
+   "https://cdn.shopify.com/s/files/1/0314/1049/files/FT8.png?v=1747222006",
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/HSFT8-SR-L_01.jpg?v=1748365495",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/HSFT8-SR-L_01.jpg?v=1745518628",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/HSFT8-SR-L_01_d6bd692b-7481-4756-bc47-b62080ba5b63.jpg?v=1745518636"
+  ]
+ },
+ "ccm-jetspeed-ft8-pro": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/HSFT8P-SR-L_01.jpg?v=1748363548",
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/HSFT8PCC-SR-MAIN.jpg?v=1752327368",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSFT8P-SR-L_01.png?v=1750259426",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSFT8PCB-SR-L_01.jpg?v=1751564307",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSFT8PCC-SR-L_01.jpg?v=1751564330",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSFT8PCR-SR-L_01.jpg?v=1751564345"
+  ]
+ },
+ "ccm-jetspeed-ft8-team": {
+  "rejected": []
+ },
+ "ccm-jetspeed-ft860": {
+  "file": "/img/models/ccm-jetspeed-ft860.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-jetspeed-ft860-intermediate-hockey-stick-1257013862.jpg?v=1788487128",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-jetspeed-ft860-senior-hockey-stick-1221781645.jpg?v=1777747982",
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/HSJ860-SR-L_01.jpg?v=1748388696",
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/HSJ860-SR-L_01_03f66bfd-34bb-481c-a689-86d291d0c20f.jpg?v=1748389404",
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/HSJ860-SR-L_01_532e7c5d-9411-4c0a-adc6-26ea50e2d8ca.jpg?v=1748388845"
+  ],
+  "size": "Junior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-jetspeed-ft860-junior-hockey-stick-1257013861.jpg?v=1788487138",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "ccm-jetspeed-ft880": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0013/8808/5351/files/HSJ880-SR-L_04.jpg?v=1758038392",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-jetspeed-ft880-intermediate-hockey-stick-1257013860.jpg?v=1788487150",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-jetspeed-ft880-senior-hockey-stick-1257013776.jpg?v=1788487159",
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/HSJ880-SR-R_01.jpg?v=1748387866",
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/HSJ880-SR-R_01_50f95a1d-7825-4675-b9fa-f0fd4a60503b.jpg?v=1748388058",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/HSJ880-SR-L_01.jpg?v=1745518672"
+  ]
+ },
+ "ccm-jetspeed-ft8s": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-jetspeed-ft8s-intermediate-hockey-stick-1257013859.jpg?v=1788487169",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-jetspeed-ft8s-senior-hockey-stick-1257013858.jpg?v=1788487197",
+   "https://cdn.shopify.com/s/files/1/0505/8838/5453/files/75d9cd215f263487724c91a1510de2ad.jpg?v=1747390580",
+   "https://cdn.shopify.com/s/files/1/0505/8838/5453/files/75d9cd215f263487724c91a1510de2ad_c20b3fb9-1b21-44d7-a0c6-e9f63d047997.jpg?v=1747390817",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/HSFTS8-SR-L_01.jpg?v=1745518304",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/HSFTS8-SR-L_01_ac9be69a-74d7-4ef5-b00a-74d46db8cba7.jpg?v=1745518594"
+  ]
+ },
+ "ccm-jetspeed-ft9-pro": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-jetspeed-ft9-pro-senior-hockey-stick-blue-1228630762.jpg?v=1774250022",
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/HSFT9P-TL-SR_01.jpg?v=1779204050",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSFT9P-BLK-SR_01.jpg?v=1783534887",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSFT9P-RED-SR_01.jpg?v=1783535255",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSFT9P-RYL-SR_01_cacefeed-a3fb-4fc6-b6f5-69e7ca55b31d.jpg?v=1783533365",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSFT9P-TL-SR_01.jpg?v=1778760352"
+  ]
+ },
+ "ccm-ribcor-trigger-10-pro": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-ribcor-trigger-10-pro-senior-hockey-stick-1257013671.jpg?v=1788486253",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-ribcor-trigger-10-pro-senior-hockey-stick-chrome-1257013838.jpg?v=1788486261",
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/HSRC10P-SR-MAIN.jpg?v=1753367003",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSRC10P-SR_04.jpg?v=1755183487",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSRC10PCC-SR-CHROME_01.jpg?v=1762434458",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSRC10PT-SR_01.jpg?v=1762436842"
+  ]
+ },
+ "ccm-ribcor-trigger-10-pro-top-shaft": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0505/8838/5453/files/8da75b9f9383b29e0a608ec02fac1ade.jpg?v=1760566597",
+   "https://cdn.shopify.com/s/files/1/0505/8838/5453/files/8da75b9f9383b29e0a608ec02fac1ade_2e211a05-ac21-4c47-b69b-17079a11615b.jpg?v=1760566636",
+   "https://cdn.shopify.com/s/files/1/0505/8838/5453/files/8da75b9f9383b29e0a608ec02fac1ade_78d70e58-7d30-4fd4-b695-bda9a59c2191.jpg?v=1760566609"
+  ]
+ },
+ "ccm-ribcor-trigger-8": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0013/8808/5351/files/e39663a0b2b81326d510b20d983b5da3_500x500_crop_center_d094491f-84d1-4667-8a40-8658d49467fe.jpg?v=1734542816",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-ribcor-trigger-8-intermediate-hockey-stick-1221800489.jpg?v=1777637188",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-ribcor-trigger-8-senior-hockey-stick-1221800538.jpg?v=1777636603",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSRC8_01.jpg?v=1750237025",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSRC8_01_3b379b5f-6c58-48fa-b7c6-6a33c480e31d.jpg?v=1750237032",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSRC8_01_733ff8f6-42db-44fe-ab3e-f59a75cde95d.jpg?v=1750237039"
+  ]
+ },
+ "ccm-ribcor-trigger-8-pro": {
+  "file": "/img/models/ccm-ribcor-trigger-8-pro.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-ribcor-trigger-8-pro-senior-hockey-stick-1221800526.jpg?v=1777636657",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSRC8PCC_01.jpg?v=1750238420",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSRC8P_01.jpg?v=1750237049"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-ribcor-trigger-8-pro-senior-hockey-stick-chrome-1221796250.jpg?v=1777664729",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "ccm-ribcor-trigger-80": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSTR80-SR_01.jpg?v=1787765905",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/HSTR80-SR_01.jpg?v=1786368592",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/HSTR80-SR_01_057bd257-1f02-4282-a6c5-dd5aacd201fe.jpg?v=1786368600",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/HSTR80-SR_01_ceadf83b-312d-41e8-8bd7-6c9c0ba07980.jpg?v=1786368604"
+  ]
+ },
+ "ccm-ribcor-trigger-9": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-ribcor-trigger-9-intermediate-hockey-stick-1257013728.jpg?v=1788487498",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-ribcor-trigger-9-senior-hockey-stick-1221787821.jpg?v=1777714716",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSRC9-SR_01.jpg?v=1750249775",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSRC9-SR_01_e1eda884-8a1c-490a-be2f-65266a8d64cb.jpg?v=1750249802",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/CCM-RIBCOR-TRIGGER-9-HOCKEY-STICK-ONE.jpg?v=1723140892",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/CCM-RIBCOR-TRIGGER-9-HOCKEY-STICK-ONE_9e43d503-95d2-4a00-b034-cf56f0b4e576.jpg?v=1723140895"
+  ]
+ },
+ "ccm-ribcor-trigger-9-pro": {
+  "file": "/img/models/ccm-ribcor-trigger-9-pro.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSRC9PCW-SR-L_01.png?v=1750251992",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "ccm-ribcor-trigger-96k": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/CCM-RIBCOR-TRIGGER-96K-HOCKEY-STICK-TWO.jpg?v=1723141146",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/CCM-RIBCOR-TRIGGER-96K-HOCKEY-STICK-TWO_bcceffcb-b596-4d66-a0f4-fda455cd436a.jpg?v=1723141150"
+  ]
+ },
+ "ccm-ribcor-trigger-9k": {
+  "file": "/img/models/ccm-ribcor-trigger-9k.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSRC9K-SR_01.jpg?v=1750249740"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-ribcor-trigger-9k-senior-hockey-stick-1257013831.jpg?v=1788487452",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "ccm-ribcor-trigger-unleashed": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-ribcor-trigger-unleashed-senior-hockey-stick-1249537802.gif?v=1784338704",
+   "https://cdn.shopify.com/s/files/1/0314/1049/files/Screenshot_2026-09-01_130813_031361ba-83e9-4548-926a-0b8d4c4be90b.png?v=1788284539",
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/HSTRUNL-JR_06.jpg?v=1786022837",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSTRUNL-JR_01_331786c1-0e2d-4a81-8120-6132ea2bbc08.jpg?v=1787772509",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSTRUNL-JR_01_97792d50-975f-4c52-98b6-2deb42380ee5.jpg?v=1787772528",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/HSTRUNL-JR_01_d7f9abff-8eed-4845-8a6a-47694f52c37d.jpg?v=1786368665"
+  ]
+ },
+ "ccm-ribcor-trigger-unleashed-pro": {
+  "file": "/img/models/ccm-ribcor-trigger-unleashed-pro.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/HSTRUNLP-SR_06.jpg?v=1785851476"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSTRUNLPBC-YT_01.jpg?v=1787068549",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "ccm-ribcor-trigger-unleashed-pro-top-shaft": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0505/8838/5453/files/2c83a9c29667e5865ffd92281fa5d1cf.jpg?v=1789121822",
+   "https://cdn.shopify.com/s/files/1/0505/8838/5453/files/2c83a9c29667e5865ffd92281fa5d1cf_60a2e59d-6323-4911-87ae-912659312df9.jpg?v=1789121858",
+   "https://cdn.shopify.com/s/files/1/0505/8838/5453/files/2c83a9c29667e5865ffd92281fa5d1cf_abc180e6-e407-4d48-89b3-9be643e25645.jpg?v=1789121880"
+  ]
+ },
+ "ccm-ribcor-trigger-unleashed-xt": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-ribcor-trigger-unleashed-xt-intermediate-hockey-stick-1249537816.gif?v=1784338632",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-ribcor-trigger-unleashed-xt-junior-hockey-stick-1249537809.gif?v=1784338838",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-ribcor-trigger-unleashed-xt-senior-hockey-stick-1249532695.gif?v=1784331717",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSTRUNLXT-SR_01.jpg?v=1785865864",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/HSTRUNLXT-SR_01.jpg?v=1786368734",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/HSTRUNLXT-SR_01_b271f3f7-6d92-42b4-9bbe-3d12b282d84b.jpg?v=1786368741"
+  ]
+ },
+ "ccm-super-tacks": {
+  "file": "/img/models/ccm-super-tacks.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/hscplus-senior-cfg-tacks-classic-plus-hockey-stick-2020_2_3.jpg?v=1750193632",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "ccm-super-tacks-2": {
+  "rejected": []
+ },
+ "ccm-super-tacks-9280": {
+  "file": "/img/models/ccm-super-tacks-9280.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/super-tacks-9280-hockey-stick_3.jpg?v=1750193361",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "ccm-super-tacks-9360": {
+  "file": "/img/models/ccm-super-tacks-9360.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/super-tacks-9360-hockey-stick_2.jpg?v=1750193569",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "ccm-super-tacks-9380": {
+  "file": "/img/models/ccm-super-tacks-9380.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/super-tacks-9380-hockey-stick_4.jpg?v=1750193556",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "ccm-super-tacks-as1": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/products/hockey-sticks-ccm-super-tacks-as1-intermediate-hockey-stick-1221729739.jpg?v=1777282566",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/products/hockey-sticks-ccm-super-tacks-as1-junior-hockey-stick-1221729744.jpg?v=1777283037",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/products/hockey-sticks-ccm-super-tacks-as1-senior-hockey-stick-1221763692.jpg?v=1774323373"
+  ]
+ },
+ "ccm-super-tacks-as2": {
+  "file": "/img/models/ccm-super-tacks-as2.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/products/hockey-sticks-ccm-super-tacks-as2-senior-hockey-sticks-1221756934.jpg?v=1776874879"
+  ],
+  "size": "Intermediate",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/super-tacks-as2-hockey-stick_1_1.jpg?v=1750193356",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "ccm-super-tacks-as2-pro": {
+  "file": "/img/models/ccm-super-tacks-as2-pro.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/super-tacks-as2-pro-hockey-stick_3_e53664dd-b75e-48ba-a226-48badad41fd1.jpg?v=1750193337",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "ccm-super-tacks-as3": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0314/1049/products/CCMSuperTacksAS3.png?v=1654531563",
+   "https://cdn.shopify.com/s/files/1/0314/1049/products/CCMSuperTacksAS3_45d5b0c6-0d9a-481e-b98a-9e24cff3ace6.png?v=1654531635"
+  ]
+ },
+ "ccm-super-tacks-as3-pro": {
+  "file": "/img/models/ccm-super-tacks-as3-pro.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/super-tacks-as3-pro-hockey-stick_3_a39eea46-f995-49a9-b758-04c7f6d9fe1e.jpg?v=1750193529",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "ccm-super-tacks-as4": {
+  "file": "/img/models/ccm-super-tacks-as4.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/hsas4-1.jpg?v=1750206536",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "ccm-super-tacks-as4-pro": {
+  "file": "/img/models/ccm-super-tacks-as4-pro.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/hsas4p-1_2_b991f43b-e17c-4c46-93d6-9ec7841f7e45.jpg?v=1750206473",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "ccm-super-tacks-as570": {
+  "file": "/img/models/ccm-super-tacks-as570.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/products/hockey-sticks-ccm-super-tacks-as570-senior-hockey-stick-1221729343.jpg?v=1777283261",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "ccm-super-tacks-team": {
+  "file": "/img/models/ccm-super-tacks-team.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/super-tacks-team-hockey-stick_3.jpg?v=1750193540",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "ccm-super-tacks-vector": {
+  "file": "/img/models/ccm-super-tacks-vector.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0013/8808/5351/products/4c1d96b037b0a8cfa9eb039c8e00323f_500x500_crop_center_9ed56ddf-4408-4bee-8108-c8fcdf9dc327.jpg?v=1670363143",
+   "https://cdn.shopify.com/s/files/1/0013/8808/5351/products/4c1d96b037b0a8cfa9eb039c8e00323f_500x500_crop_center_d9280f1d-ec24-42d0-85ec-f42b70e1333a.jpg?v=1670363325"
+  ],
+  "size": "Junior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/products/hockey-sticks-ccm-super-tacks-vector-premier-junior-hockey-stick-1221729330.jpg?v=1777287992",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "ccm-tacks-as-v": {
+  "file": "/img/models/ccm-tacks-as-v.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/hsas5_01_3_be060880-a145-49af-854e-99bc4365992d.jpg?v=1750220460",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "ccm-tacks-as-v-pro": {
+  "file": "/img/models/ccm-tacks-as-v-pro.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/hsas5p_2_b9ec2cfe-aaa6-4857-ae99-37c5651d887c.jpg?v=1750219896",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "ccm-tacks-as-vi": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSAS6_01.jpg?v=1750237511",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSAS6_01_7792c822-5a7d-414a-98b1-6ad046e4cad4.jpg?v=1750237516",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSAS6_01_cd8f3ae4-f2e1-4291-99dd-25b5a20b2a24.jpg?v=1750237524"
+  ]
+ },
+ "ccm-tacks-as-vi-pro": {
+  "file": "/img/models/ccm-tacks-as-vi-pro.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Intermediate",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HS_TACKS_AS-VI_PRO_TK_04_1ae92762-48ed-471c-a6c7-143eb709f34c.jpg?v=1750237538",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "ccm-tacks-xf": {
+  "file": "/img/models/ccm-tacks-xf.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/HSXF-SR_06.jpg?v=1727799213"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSXFGH25WH-SR_01.jpg?v=1764876192",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "ccm-tacks-xf-70": {
+  "file": "/img/models/ccm-tacks-xf-70.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSXF70-SR_01.jpg?v=1750251895"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-tacks-xf70-senior-hockey-stick-1257013815.jpg?v=1788487360",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "ccm-tacks-xf-pro": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0013/8808/5351/files/3039477e2a63ed6eb507ae495a28e5ac_500x500_crop_center_ebff1db8-f9e8-4dce-9a1f-33f1c8db4e25.jpg?v=1729298932",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-tacks-xf-pro-senior-hockey-stick-1257013820.jpg?v=1788487414",
+   "https://cdn.shopify.com/s/files/1/0505/8838/5453/files/3039477e2a63ed6eb507ae495a28e5ac_b6ff2a4d-910d-4850-9876-62a3a1e470e8.jpg?v=1728575881",
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/HSXFP-SR_06.jpg?v=1727720151",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSXFP-SR_01.jpg?v=1750251827",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/CCM-TACKS-XF-PRO-HOCKEY-STICK-THIRTEEN.jpg?v=1726079447"
+  ]
+ },
+ "ccm-vizion": {
+  "file": "/img/models/ccm-vizion.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HS-VZ24_VIZION_SR_TK-016.jpg?v=1750252420"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-vizion-senior-hockey-stick-1257013811.jpg?v=1788487240",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "ccm-vizion-2": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-vizion-2-intermediate-hockey-stick-1257013669.jpg?v=1788486218",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-vizion-2-junior-hockey-stick-1257013646.jpg?v=1788486210",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-vizion-2-senior-hockey-stick-1257013667.jpg?v=1788486200",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-ccm-vizion-2-youth-hockey-stick-1221775654.jpg?v=1771771510"
+  ]
+ },
+ "ccm-vizion-26": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSVZ25-INT_04.jpg?v=1767718836",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/HSVZ25CAN-SR_01_5cd13b81-935e-4c1c-96e2-6e6f84bdb253.jpg?v=1768488447",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/HSVZ25-INT_01.jpg?v=1767627009",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/HSVZ25-INT_01_2cd3f8bd-8a69-4112-9b2e-9bacc4fed11b.jpg?v=1767627161",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/HSVZ25-INT_01_512557cb-b0b4-4258-ba1c-4b477872be9e.jpg?v=1767627237",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/HSVZ25-INT_01_6e326e17-41ab-471d-a726-905ab79b7663.jpg?v=1767627296"
+  ]
+ },
+ "sherwood-code-encrypt": {
+  "file": "/img/models/sherwood-code-encrypt.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/codeencrypt1_1.jpg?v=1729615780",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334278994__99______a.jpg?v=1750248015"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-sherwood-code-encrypt-1-senior-hockey-stick-1221794179.jpg?v=1777681612",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "sherwood-code-encrypt-2": {
+  "file": "/img/models/sherwood-code-encrypt-2.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0552/3217/files/encrypt2_sr1.jpg?v=1738875327",
+  "store": "discounthockey",
+  "w": 800
+ },
+ "sherwood-code-encrypt-3": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0314/1049/files/encrypt_3.jpg?v=1772567641",
+   "https://cdn.shopify.com/s/files/1/0505/8838/5453/files/70ef74bbddd662e6f7685f66dd55114a.jpg?v=1723132777",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334279134__99______a.jpg?v=1750248070",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334279134__99______a_e6d6b240-69b7-4c6d-99b5-68459f3b51ea.jpg?v=1750248080",
+   "https://cdn.shopify.com/s/files/1/0749/9529/files/SherwoodCodeEncrypt3SeniorCompositeHockeyStick.jpg?v=1730498238",
+   "https://cdn.shopify.com/s/files/1/0749/9529/files/SherwoodCodeEncrypt3SeniorCompositeHockeyStick_710728fd-0a3e-4b47-9bb7-67c7ace79713.jpg?v=1730498971"
+  ]
+ },
+ "sherwood-code-encrypt-4": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0314/1049/files/encrypt_4.jpg?v=1772567545",
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/ecrypt4_sr_fc433b93-e9c2-48fd-99f0-acc60c5254c6.jpg?v=1738879066",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334279151__99______a.jpg?v=1750248105",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334279151__99______a_c73b1f1e-b5cb-4e8b-b73d-d6d7e4622626.jpg?v=1750248116",
+   "https://cdn.shopify.com/s/files/1/0749/9529/files/SherwoodCodeEncrypt4SeniorHockeyStick11.jpg?v=1730496537",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/SHERWOOD-CODE-ENCRYPT-4-HOCKEY-STICK-TWO.jpg?v=1719587890"
+  ]
+ },
+ "sherwood-code-encrypt-pro": {
+  "file": "/img/models/sherwood-code-encrypt-pro.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0552/3217/files/encryptpro_2.jpg?v=1729786974",
+  "store": "discounthockey",
+  "w": 800
+ },
+ "sherwood-code-tmp": {
+  "rejected": []
+ },
+ "sherwood-code-tmp-3": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0749/9529/products/sherwood-code-tmp-3-composite-hockey-sticks.jpg?v=1666373926"
+  ]
+ },
+ "sherwood-code-tmp-pro": {
+  "file": "/img/models/sherwood-code-tmp-pro.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334274956_99_b_10162342_1024x1024_2x_f6686110-22af-4218-a466-b5205c60802a.jpg?v=1750237498",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "sherwood-rekker-legend": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0314/1049/files/Rekker_Legend_1.png?v=1768342076",
+   "https://cdn.shopify.com/s/files/1/0314/1049/files/unnamed_86916bc4-a220-4621-b4ea-285be5fe815a.jpg?v=1747336807",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334094097_20_a_10162310.jpg?v=1750236900",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334094097_20_a_10162310_99559053-7bfa-4800-b5d1-41ffa77e8ab9.jpg?v=1750236920",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334094097_20_a_10162310_b7900e0a-9286-4ce9-802c-6cdf51955903.jpg?v=1750236910"
+  ]
+ },
+ "sherwood-rekker-legend-2": {
+  "file": "/img/models/sherwood-rekker-legend-2.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334094141_01_a_10162314_ed4733b2-579c-4fe6-9272-c6056c3d6f2d.jpg?v=1750236941",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "sherwood-rekker-legend-3": {
+  "file": "/img/models/sherwood-rekker-legend-3.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334094172_38_a_10162317.jpg?v=1750236974"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0749/9529/files/sherwood-rekker-legend-3-composite-hockey-sticks.jpg?v=1692313983",
+  "store": "hockeytron",
+  "w": 800
+ },
+ "sherwood-rekker-legend-4": {
+  "file": "/img/models/sherwood-rekker-legend-4.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334094186_39_a_10162319.jpg?v=1750237005",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "sherwood-rekker-legend-pro": {
+  "file": "/img/models/sherwood-rekker-legend-pro.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334094217_20_a_10162322_b0bc8355-0594-455a-a8d4-724d4dbff2c8.jpg?v=1750236860",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "sherwood-rekker-morph": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-sherwood-rekker-morph-1-senior-hockey-stick-1257013793.jpg?v=1788486510",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-sherwood-rekker-morph-1-senior-hockey-stick-long-1257013791.jpg?v=1788486523",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-sherwood-rekker-morph-apex-senior-hockey-stick-1257013790.jpg?v=1788486518",
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/sr_morph1_main.jpg?v=1757606242",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334483161__31______a.jpg?v=1754502726",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334483161__31______a_8826262f-78c4-4947-8fa5-b356fadd002d.jpg?v=1754502729"
+  ]
+ },
+ "sherwood-rekker-morph-2": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334483234__31______a.jpg?v=1754502742",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334483234__31______a_b7d180de-7514-4416-9a2e-897e52b126f4.jpg?v=1754502754",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334483234__31______a_c6776204-3b03-41bc-bec9-df4cf68dcd0c.jpg?v=1754502751",
+   "https://cdn.shopify.com/s/files/1/0749/9529/files/SherwoodRekkerMorph2CompositeHockeyStick.png?v=1753990475",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/Sherwood-Rekker-Morph-2-Hockey-Stick-four.jpg?v=1754491744",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/Sherwood-Rekker-Morph-2-Hockey-Stick-four_cb3f6cd9-e980-46fd-948e-d20f72385c5a.jpg?v=1754491734"
+  ]
+ },
+ "sherwood-rekker-morph-3": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334483272__31______a.jpg?v=1754502774",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334483272__31______a_d2283e6b-ea80-484c-8c33-a95b4bbca1f7.jpg?v=1754502776",
+   "https://cdn.shopify.com/s/files/1/0749/9529/files/SherwoodRekkerMorph3SeniorCompositeHockeyStick.png?v=1753988527",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/Sherwood-Rekker-Morph-3-Hockey-Stick-five.jpg?v=1754491768",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/Sherwood-Rekker-Morph-3-Hockey-Stick-five_5f936431-9c53-4d95-82fb-3bea2251dfcd.jpg?v=1754491572"
+  ]
+ },
+ "sherwood-rekker-morph-pro": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-sherwood-rekker-morph-pro-senior-hockey-stick-1257013780.jpg?v=1788486434",
+   "https://cdn.shopify.com/s/files/1/0552/3217/files/sr_morphpro_main.jpg?v=1756400038",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334483070__31______a.jpg?v=1754502705",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334483070__31______a_42892205-554c-4e3e-8026-3f28791db048.jpg?v=1754502709",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334645013__41______a.jpg?v=1781548837",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/334645148__41______a.jpg?v=1781547188"
+  ]
+ },
+ "sherwood-rekker-morph-pro-team": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0314/1049/files/main_0cf4b4d6-bb32-425b-ad7e-62ee8af8f935.jpg?v=1769108438",
+   "https://cdn.shopify.com/s/files/1/0314/1049/files/main_914c4ef9-de47-4357-9de4-7224ceccd26e.jpg?v=1769108318"
+  ]
+ },
+ "true-catalyst-9x": {
+  "file": "/img/models/true-catalyst-9x.webp",
+  "h": 1059,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/products/hockey-sticks-true-catalyst-9x-senior-hockey-stick-1221744443.jpg?v=1777134160"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0013/8808/5351/products/CAT9STPLAYERSTICK1.jpg?v=1630186661",
+  "store": "justhockey",
+  "w": 800
+ },
+ "true-catalyst-9x3": {
+  "file": "/img/models/true-catalyst-9x3.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/2023_Hockey_Catalyst_PlayerStick_9X3_417b8394-6a37-4998-8ce4-ef777904284f.jpg?v=1750233720",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "true-catalyst-9x4": {
+  "rejected": []
+ },
+ "true-hzrdus-5x4": {
+  "file": "/img/models/true-hzrdus-5x4.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/Untitleddesign_1_7ce8636a-441d-4a1b-8391-73651209954b.jpg?v=1750245407",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "true-hzrdus-5x5": {
+  "file": "/img/models/true-hzrdus-5x5.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/Copy_of_2025_Hockey_HZRDUS_5X5_PlayerStick_01.jpg?v=1755722915",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "true-hzrdus-7x": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/truehockeyhzrdus-7x_4.jpg?v=1750214059",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/truehockeyhzrdus-7x_4_26bdf3b9-2c48-491d-8208-9f37d6949735.jpg?v=1750214062"
+  ]
+ },
+ "true-hzrdus-7x4": {
+  "file": "/img/models/true-hzrdus-7x4.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/Untitleddesign_2_2c5ac9e9-47e1-45c2-abf3-4cf777aa07c7.jpg?v=1750245419",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "true-hzrdus-7x5": {
+  "file": "/img/models/true-hzrdus-7x5.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/Copy_of_2025_Hockey_HZRDUS_7X5_PlayerStick_01.jpg?v=1755722910",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "true-hzrdus-9x": {
+  "file": "/img/models/true-hzrdus-9x.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0013/8808/5351/products/image_5a7e08d8-cd6a-4b05-87f4-1d485bec5616.jpg?v=1656677231",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-true-hzrdus-9x-senior-hockey-stick-2022-1257013662.jpg?v=1788488195",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/truehockeyhzrdus-9x_5.jpg?v=1750214066",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/truehockeyhzrdus-9x_5_96c4dead-246b-46ce-bfdd-e5181c5e3404.jpg?v=1750214068"
+  ],
+  "size": "Intermediate",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-true-hzrdus-9x-intermediate-hockey-stick-1221726881.jpg?v=1777314883",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "true-hzrdus-9x4": {
+  "file": "/img/models/true-hzrdus-9x4.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0552/3217/files/2024_Hockey_HZRDUS_PlayerStick_9x4_JR_Front90.jpg?v=1741713217",
+  "store": "discounthockey",
+  "w": 800
+ },
+ "true-project-x": {
+  "file": "/img/models/true-project-x.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/project-x-ops-hockey-stick_1_b54355e1-47e2-41e8-96fc-b4e48ba8286c.jpg?v=1750196188",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "warrior-alpha-lx2": {
+  "file": "/img/models/warrior-alpha-lx2.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/lx2c553bk_war_01_i_f5cf65d5-3e79-4ddb-8f2d-80104a19a1d0.jpg?v=1750236779",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "warrior-alpha-lx2-max": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0013/8808/5351/files/lx2m853bk_war_02_i.png?v=1688016248",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-warrior-alpha-lx2-max-intermediate-hockey-stick-1221802613.jpg?v=1777615964",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-warrior-alpha-lx2-max-senior-hockey-stick-1221802585.jpg?v=1777616261",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/lx2m553rbk_war_06_i.jpg?v=1750236784",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/lx2m853rbk_war_06_i.jpg?v=1750236792"
+  ]
+ },
+ "warrior-alpha-lx2-pro": {
+  "file": "/img/models/warrior-alpha-lx2-pro.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/lx2p853bk_war_05_i.jpg?v=1750232148"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-warrior-alpha-lx2-pro-senior-hockey-stick-1221802990.jpg?v=1777611833",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "warrior-alpha-lx2-team": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-warrior-alpha-lx2-team-intermediate-hockey-stick-1221802523.jpg?v=1777614786",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-warrior-alpha-lx2-team-senior-hockey-stick-1221802511.jpg?v=1777616464"
+  ]
+ },
+ "warrior-alpha-lx20": {
+  "file": "/img/models/warrior-alpha-lx20.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Intermediate",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-warrior-alpha-lx20-intermediate-hockey-stick-1242922925.png?v=1780688412",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "warrior-alpha-lx3": {
+  "file": "/img/models/warrior-alpha-lx3.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/LX3855_W28_A_1.jpg?v=1772130652",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/LX3C755_W03_A_1.jpg?v=1772133380"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/warrior-alpha-lx3-comp-junior-hockey-stick-1221769425.gif?v=1771542076",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "warrior-alpha-lx3-pro": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0013/8808/5351/files/LX3P855_W28_A_4.png?v=1750366979",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-warrior-alpha-lx3-pro-senior-hockey-stick-1257013668.jpg?v=1788486651",
+   "https://cdn.shopify.com/s/files/1/0505/8838/5453/files/de6c58c461886687b39a6c54f54bd130.jpg?v=1751019680",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/LX3P705_M03_A_1.png?v=1751464940",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/Warrior-Alpha-LX3-Pro-Canada-Edition-Hockey-Stick-Three_87ba0044-3946-42f0-a47f-a8771b61f29a.jpg?v=1767990946",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/Warrior-Alpha-Lx3-Pro-Hockey-Stick-three.jpg?v=1751035325"
+  ]
+ },
+ "warrior-alpha-lx3-team": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-warrior-alpha-lx3-team-senior-hockey-stick-1238244961.jpg?v=1778695461",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/LX3T705_W01_A_1.jpg?v=1772196195"
+  ]
+ },
+ "warrior-alpha-lx3t": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/Warrior-Alpha-LX3T-Intermediate-Hockey-Stick-one.jpg?v=1757009395",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/Warrior-Alpha-LX3T-Senior-Hockey-Stick-one.jpg?v=1757009392"
+  ]
+ },
+ "warrior-covert-qr5": {
+  "rejected": []
+ },
+ "warrior-covert-qr5-20": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0314/1049/files/Warrior-Covert-QR5-20.jpg?v=1739296353",
+   "https://cdn.shopify.com/s/files/1/0314/1049/products/warrior-hockey-stick-covert-qr5-20-sr_1.webp?v=1710794884",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/warrior-hockey-stick-covert-qr5-20_5.jpg?v=1750212914",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/warrior-hockey-stick-covert-qr5-20_5_5041a44b-1383-4ffd-b5df-d84a59fa1174.jpg?v=1750212978",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/warrior-hockey-stick-covert-qr5-20_5_5e70bf27-953f-454d-b6ac-419d42d3572d.jpg?v=1750212945"
+  ]
+ },
+ "warrior-covert-qr5-30": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/warrior-hockey-stick-covert-qr5-30-jr_3.jpg?v=1750213244",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/warrior-hockey-stick-covert-qr5-30_3.jpg?v=1750213210",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/warrior-hockey-stick-covert-qr5-30_3_040db055-5c74-4b3a-8b0a-b618d5fbac69.jpg?v=1750213279",
+   "https://cdn.shopify.com/s/files/1/1973/6723/products/WARRIOR-COVERT-QR5-30-JUNIOR-HOCKEY-STICK.jpg?v=1661456612"
+  ]
+ },
+ "warrior-covert-qr5-40": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0013/8808/5351/files/qr540402bkb_war_02_i.jpg?v=1706030262",
+   "https://cdn.shopify.com/s/files/1/0013/8808/5351/files/qr540552bkb_war_02_i.jpg?v=1706026949",
+   "https://cdn.shopify.com/s/files/1/0013/8808/5351/files/qr540552bkb_war_02_i_8d671234-e98d-4d45-97b5-fe9f35c730ec.jpg?v=1706028838",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/warrior-hockey-stick-covert-qr5-40-jr_2.jpg?v=1750213360",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/warrior-hockey-stick-covert-qr5-40_2.jpg?v=1750213304",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/warrior-hockey-stick-covert-qr5-40_2_a1b464fc-3424-4631-8e6c-abb2ec987bfe.jpg?v=1750213332"
+  ]
+ },
+ "warrior-covert-qr5-50": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0314/1049/products/warrior-hockey-stick-covert-qr5-50-sr_1.webp?v=1710794891",
+   "https://cdn.shopify.com/s/files/1/0314/1049/products/warrior-hockey-stick-covert-qr5-50-sr_1_4b0cdcec-4972-4e1b-a648-7f9050833f50.webp?v=1710794900",
+   "https://cdn.shopify.com/s/files/1/0314/1049/products/warrior-hockey-stick-covert-qr5-50-sr_1_d1f4ced8-f0fb-4ccf-9a02-153b9d7c1ca1.webp?v=1710794895",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/warrior-hockey-stick-covert-qr5-50-jr_2.jpg?v=1750213419",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/warrior-hockey-stick-covert-qr5-50_3.jpg?v=1750213387",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/warrior-hockey-stick-covert-qr5-50_3_feb5ba26-a473-437f-820e-e36924aeb412.jpg?v=1750213445"
+  ]
+ },
+ "warrior-covert-qr5-pro": {
+  "file": "/img/models/warrior-covert-qr5-pro.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/warrior-hockey-stick-covert-qr5-pro-sr-63-1_3.jpg?v=1750212870",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/warrior-hockey-stick-covert-qr5-pro-sr_3.jpg?v=1750213124"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/products/hockey-sticks-warrior-covert-qr5-pro-senior-hockey-stick-extra-long-1221731404.jpg?v=1777266975",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "warrior-covert-qr5-team": {
+  "file": "/img/models/warrior-covert-qr5-team.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/products/hockey-sticks-warrior-covert-qr5-team-senior-hockey-stick-1221734466.jpg?v=1777240356",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "warrior-covert-qr5t-team": {
+  "rejected": []
+ },
+ "warrior-covert-qr6": {
+  "file": "/img/models/warrior-covert-qr6.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/Untitleddesign_8.jpg?v=1750245709",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "warrior-covert-qr6-pro": {
+  "file": "/img/models/warrior-covert-qr6-pro.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/qr6p854bk_war_05_i.jpg?v=1750245680"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-warrior-covert-qr6-pro-senior-hockey-stick-1257013696.jpg?v=1788487623",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "warrior-covert-qr6-rev": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/Untitleddesign_11.jpg?v=1750245729",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/Untitleddesign_12.jpg?v=1750245735",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/Untitleddesign_13.jpg?v=1750245742",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/WARRIOR-COVERT-QR6-REV-HOCKEY-STICK-ONE.jpg?v=1718811309",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/WARRIOR-COVERT-QR6-REV-HOCKEY-STICK-ONE_828ec200-b2a6-401a-b53b-23f83194d4ac.jpg?v=1718811344",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/WARRIOR-COVERT-QR6-REV-JUNIOR-HOCKEY-STICK-TWO.jpg?v=1718810747"
+  ]
+ },
+ "warrior-covert-qr6-team": {
+  "file": "/img/models/warrior-covert-qr6-team.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/Untitleddesign_14.jpg?v=1750245751"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-warrior-covert-qr6-team-senior-hockey-stick-1221776136.png?v=1777780128",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "warrior-covert-qr6t-team": {
+  "rejected": []
+ },
+ "warrior-covert-qr7": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/QR785S6_W88_P_1.jpg?v=1781807463",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/QR7TS856_W03_P_1.jpg?v=1781808333",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/Warrior-Covert-QR7-Intermediate-Hockey-Stick-One.jpg?v=1782142793"
+  ]
+ },
+ "warrior-covert-qr7-pro": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0013/8808/5351/files/QR7P85S6_W03_A_4.jpg?v=1780339785",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-warrior-covert-qr7-pro-intermediate-hockey-stick-1261629018.jpg?v=1791495559",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-warrior-covert-qr7-pro-senior-hockey-stick-1261629004.jpg?v=1791495578",
+   "https://cdn.shopify.com/s/files/1/0505/8838/5453/files/7310816da0e509659d56a4fe3fc94561_4634f910-2ca9-426f-b71f-b9ee8aa565bb.jpg?v=1782482107",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/QR7P85S6_W88_A_1.jpg?v=1781802726",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/QR7P85S6_W03_A_4.jpg?v=1782140662"
+  ]
+ },
+ "warrior-covert-qr7-rev": {
+  "file": "/img/models/warrior-covert-qr7-rev.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/QR7RS856_W03_A_1.jpg?v=1781809266",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/Warrior-Covert-QR7-Rev-Intermediate-Hockey-Stick.jpg?v=1782142801",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/Warrior-Covert-QR7-Rev-Senior-Hockey-Stick-One.jpg?v=1782142798"
+  ],
+  "size": "Junior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/QR7RJ506_W28_A_1.jpg?v=1781809837",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "warrior-covert-qr7-team": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/Warrior-Covert-QR7-Team-Senior-Hockey-Stick-One.jpg?v=1782142812",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/Warrior-Covert-QR7-Team-Senior-Hockey-Stick-One_52f6ae7c-65c0-4bc6-8415-ae8cdff69e07.jpg?v=1782142814"
+  ]
+ },
+ "warrior-novium": {
+  "file": "/img/models/warrior-novium.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/products/hockey-sticks-warrior-novium-sp-senior-hockey-stick-1221727901.jpg?v=1777297815",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/novium_2_68b3f35b-4412-4527-a012-99e5acfb1882.jpg?v=1750219550",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/noviumsp_2_16db3368-bbc6-45c7-82b5-2026491db488.jpg?v=1750219680"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/products/hockey-sticks-warrior-novium-senior-hockey-stick-1221727917.jpg?v=1777300894",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "warrior-novium-2": {
+  "file": "/img/models/warrior-novium-2.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/NO2854_W28_P_eb7a3de3-2ed4-4a51-9d5b-49a55ebea50a.jpg?v=1750251754",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "warrior-novium-2-pro": {
+  "file": "/img/models/warrior-novium-2-pro.webp",
+  "h": 800,
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/N2P854_W28_A_4_fae126fd-0a35-4131-8cdd-d8ce391aacfb.jpg?v=1750251735",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/N2PW854_W28_A_4_230a0a2f-c8e6-40ae-9a7c-b13ddc482c03.jpg?v=1750251783"
+  ],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-warrior-novium2-pro-senior-hockey-stick-1257013691.jpg?v=1788487757",
+  "store": "thehockeyshop",
+  "w": 800
+ },
+ "warrior-novium-3": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-warrior-novium3-senior-hockey-stick-1256826875.gif?v=1788377870",
+   "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-warrior-novium3-sp-senior-hockey-stick-1256826865.gif?v=1788377651",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/N3SP756_W28_A_5.jpg?v=1790170211",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/NO3SM856_W88_A_5.jpg?v=1790168892",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/N3SP856_W28_A_4.jpg?v=1789487034",
+   "https://cdn.shopify.com/s/files/1/1973/6723/files/NO3SM856_W28_A_4.jpg?v=1789486972"
+  ]
+ },
+ "warrior-novium-3-pro": {
+  "file": "/img/models/warrior-novium-3-pro.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Senior",
+  "src": "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/NPWMS856_W28_A_5.jpg?v=1790165484",
+  "store": "sportsexcellence",
+  "w": 800
+ },
+ "warrior-novium-pro": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0013/8808/5351/products/np852brd_war_03_i.jpg?v=1670356943",
+   "https://cdn.shopify.com/s/files/1/0013/8808/5351/products/np852brd_war_03_i_29cea93d-b7fe-45b6-8403-4b81389dc605.jpg?v=1670357491",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/noviumpro_3.jpg?v=1750219578",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/noviumpro_3_7ca74bd9-12e0-4943-be54-45ffed78abec.jpg?v=1750219619",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/products/noviumpro_3_af73ae7a-0f24-4e75-9cd3-d356e9b0c7f1.jpg?v=1750219593",
+   "https://cdn.shopify.com/s/files/1/1973/6723/products/WARRIOR-NOVIUM-PRO-HOCKEY-STICK-THREE_2b88fd9e-831e-4d2a-9a2d-094380d08e34.jpg?v=1663358021"
+  ]
+ },
+ "warrior-super-novium": {
+  "rejected": [
+   "https://cdn.shopify.com/s/files/1/0013/8808/5351/files/sprnov403bk_war_02_i.png?v=1697821354",
+   "https://cdn.shopify.com/s/files/1/0013/8808/5351/files/sprnov633bk_war_07_i.png?v=1697818249",
+   "https://cdn.shopify.com/s/files/1/0013/8808/5351/files/sprnov853bk_war_07_i.png?v=1697817969",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/sprnov403bk_war_07_i.jpg?v=1750237469",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/sprnov633bk_war_06_i.jpg?v=1750237461",
+   "https://cdn.shopify.com/s/files/1/0731/0019/8200/files/sprnov853bk_war_06_i.jpg?v=1750237453"
+  ]
+ },
+ "warrior-super-novium-pro": {
+  "file": "/img/models/warrior-super-novium-pro.webp",
+  "h": 800,
+  "rejected": [],
+  "size": "Intermediate",
+  "src": "https://cdn.shopify.com/s/files/1/0020/1585/4658/files/hockey-sticks-warrior-super-novium-pro-intermediate-hockey-stick-1221800207.jpg?v=1777638808",
+  "store": "thehockeyshop",
+  "w": 800
+ }
+}

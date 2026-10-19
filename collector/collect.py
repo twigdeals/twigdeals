@@ -156,6 +156,8 @@ def init(db):
       first_seen TEXT, last_seen TEXT);
     CREATE TABLE IF NOT EXISTS prices(variant_id TEXT, ts TEXT, price REAL, compare_at REAL, available INTEGER);
     CREATE INDEX IF NOT EXISTS ix_prices ON prices(variant_id, ts);
+    CREATE TABLE IF NOT EXISTS images(store TEXT, handle TEXT, model_slug TEXT, title TEXT, size TEXT, pro_stock INTEGER,
+      src TEXT, width INTEGER, height INTEGER, last_seen TEXT, PRIMARY KEY(store, handle));
     CREATE TABLE IF NOT EXISTS runs(ts TEXT, store TEXT, products INTEGER, matched INTEGER, variants INTEGER, status TEXT);
     """)
 
@@ -176,6 +178,10 @@ def collect_store(db, store, models, ts):
             if not hit: continue
             m, tname, size, pro = hit; title = p["title"]
             nmatch += 1
+            img = (p.get("images") or [None])[0]
+            if img and img.get("src"):  # first product image; build.py picks one per model and hosts it itself
+                db.execute("INSERT OR REPLACE INTO images VALUES(?,?,?,?,?,?,?,?,?,?)", (store["id"], p["handle"],
+                          slug(m["brand"] + " " + tname), title, size, pro, img["src"], img.get("width"), img.get("height"), ts))
             for v in p["variants"]:
                 if not v.get("price") or float(v["price"]) <= 0: continue  # $0 placeholders
                 vid = f"{store['id']}:{v['id']}"

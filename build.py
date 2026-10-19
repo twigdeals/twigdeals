@@ -6,6 +6,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 import urllib.request
+import images
 ET = ZoneInfo("America/New_York")
 STOCK_UNKNOWN = {"sourceforsports"}  # feed reports every variant available; not trustworthy
 
@@ -131,6 +132,8 @@ def main():
     live = [v for v in vs.values() if v["current"]]
     models = defaultdict(list)
     for v in live: models[(v["model_slug"], v["brand"], v["model"])].append(v)
+    PHOTOS = images.pick(db, sorted({k[0] for k in models}))
+    if (ROOT / "static/img").exists(): shutil.copytree(ROOT / "static/img", OUT / "img", dirs_exist_ok=True)
 
     def card(v, extra=""):
         spec = " · ".join(filter(None,[v["size"] and v["size"][:3].upper()+".",v["curve"],(v["flex"] and v["flex"]+" flex"),v["hand"] and v["hand"][0]+"H"]))
@@ -207,8 +210,11 @@ def main():
         figs = fig(f"Lowest now · {szl}", bn, "price") + fig("Lowest ever · " + ("senior" if any(v["size"]=="Senior" for v in new) else "any size"), be, "lowest")
         figs += f"<div><dt>Biggest cut</dt><dd class='red'>{('−'+str(maxdrop)+'%') if maxdrop else '—'}</dd></div><div><dt>Confirmed in stock</dt><dd>{len(inst)}<small>/{len(vl)}</small></dd></div>"
         fxnote = f"CAD prices converted at the Bank of Canada rate of {FX['usdcad']:.4f} ({FX['date']})." if FX["usdcad"] else ""
-        body = f'''<div class="w page"><p class="crumb"><a href="/sticks/">Sticks</a> / {e(b)}</p><p class="kicker">{e(b)}</p><h1>{e(m)}</h1>
-<p class="lede">Tracking {len(vl)} variants at {", ".join(stores)}. New sticks and pro stock are kept separate, and lowest-ever counts new sticks only. {fxnote}</p>
+        ph = PHOTOS.get(s)
+        photo = (f'<figure class="photo"><img src="{ph["file"]}" alt="{e(b)} {e(m)} hockey stick" width="{ph["w"]}" height="{ph["h"]}" loading="lazy" decoding="async">'
+                 f'<figcaption>Product photo: {e(STORE_NAMES[ph["store"]])}</figcaption></figure>') if ph else ""
+        body = f'''<div class="w page"><p class="crumb"><a href="/sticks/">Sticks</a> / {e(b)}</p><div class="{'phead has-photo' if ph else 'phead'}"><div><p class="kicker">{e(b)}</p><h1>{e(m)}</h1>
+<p class="lede">Tracking {len(vl)} variants at {", ".join(stores)}. New sticks and pro stock are kept separate, and lowest-ever counts new sticks only. {fxnote}</p></div>{photo}</div>
 <dl class="figs">{figs}</dl><h2 class="h2">Price history</h2>{chart(series)}<h2 class="h2">Every variant: senior first, cheapest in stock first</h2>
 <div class="tw"><table><thead><tr><th>Store</th><th>Size</th><th>Curve</th><th class="num">Flex</th><th>Hand</th><th class="num">Price</th><th class="num">Low</th><th>Stock</th><th></th></tr></thead><tbody>{tr}</tbody></table></div></div>'''
         write(f"/sticks/{s}/", page(f"{b} {m} price tracker: lowest price by curve & flex | {SITE}", body, f"Current and lowest-ever prices for the {b} {m} hockey stick by curve, flex and hand."))
