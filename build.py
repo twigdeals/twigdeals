@@ -93,14 +93,14 @@ def main():
     OUT.mkdir()
     (OUT / "style.css").write_text(open(ROOT/"static/fonts/fonts.css").read() + CSS); shutil.copytree(ROOT/"static/fonts", OUT/"fonts", dirs_exist_ok=True)
     db = sqlite3.connect(ROOT / "data/prices.db"); db.row_factory = sqlite3.Row
-    last_ts = db.execute("SELECT max(ts) FROM prices").fetchone()[0]
+    last_ts = db.execute("SELECT max(last_seen) FROM variants").fetchone()[0]
     vs = {r["id"]: dict(r) for r in db.execute("SELECT * FROM variants")}
     hist = defaultdict(list)
     for r in db.execute("SELECT * FROM prices ORDER BY ts"): hist[r["variant_id"]].append(dict(r))
     week_ago = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
     for vid, v in vs.items():
         h = hist[vid]; cur = h[-1]
-        v.update(price=cur["price"], compare_at=cur["compare_at"], available=(None if v["store"] in STOCK_UNKNOWN else cur["available"]), current=cur["ts"] == last_ts,
+        v.update(price=cur["price"], compare_at=cur["compare_at"], available=(None if v["store"] in STOCK_UNKNOWN else cur["available"]), current=v["last_seen"] == last_ts,
                  lowest=min(x["price"] for x in h), curve_n=norm_curve(v["curve"]))
         wk = [x["price"] for x in h if x["ts"] >= week_ago and x["ts"] != cur["ts"]]
         v["week_high"] = max(wk) if wk else None

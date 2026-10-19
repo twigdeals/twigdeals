@@ -125,7 +125,10 @@ def collect_store(db, store, models, ts):
                 db.execute("""INSERT INTO variants VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
                    ON CONFLICT(id) DO UPDATE SET last_seen=excluded.last_seen, product_title=excluded.product_title, size=excluded.size, hand=excluded.hand, flex=excluded.flex, curve=excluded.curve, pro_stock=excluded.pro_stock, model=excluded.model, model_slug=excluded.model_slug""", row)
                 ca = float(v["compare_at_price"]) if v.get("compare_at_price") else None
-                db.execute("INSERT INTO prices VALUES(?,?,?,?,?)", (vid, ts, float(v["price"]), ca, 1 if v.get("available") else 0))
+                new = (float(v["price"]), ca, 1 if v.get("available") else 0)
+                last = db.execute("SELECT price, compare_at, available FROM prices WHERE variant_id=? ORDER BY ts DESC LIMIT 1", (vid,)).fetchone()
+                if last != new:  # store changes only; variants.last_seen records each check
+                    db.execute("INSERT INTO prices VALUES(?,?,?,?,?)", (vid, ts, *new))
                 nvar += 1
         time.sleep(DELAY)
     db.execute("INSERT INTO runs VALUES(?,?,?,?,?,?)", (ts, store["id"], nprod, nmatch, nvar, status))
