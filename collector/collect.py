@@ -158,6 +158,8 @@ def init(db):
     CREATE INDEX IF NOT EXISTS ix_prices ON prices(variant_id, ts);
     CREATE TABLE IF NOT EXISTS images(store TEXT, handle TEXT, model_slug TEXT, title TEXT, size TEXT, pro_stock INTEGER,
       src TEXT, width INTEGER, height INTEGER, last_seen TEXT, PRIMARY KEY(store, handle));
+    CREATE TABLE IF NOT EXISTS image_srcs(store TEXT, handle TEXT, pos INTEGER, src TEXT, width INTEGER, height INTEGER,
+      PRIMARY KEY(store, handle, pos));
     CREATE TABLE IF NOT EXISTS runs(ts TEXT, store TEXT, products INTEGER, matched INTEGER, variants INTEGER, status TEXT);
     """)
 
@@ -182,6 +184,10 @@ def collect_store(db, store, models, ts):
             if img and img.get("src"):  # first product image; build.py picks one per model and hosts it itself
                 db.execute("INSERT OR REPLACE INTO images VALUES(?,?,?,?,?,?,?,?,?,?)", (store["id"], p["handle"],
                           slug(m["brand"] + " " + tname), title, size, pro, img["src"], img.get("width"), img.get("height"), ts))
+            db.execute("DELETE FROM image_srcs WHERE store=? AND handle=?", (store["id"], p["handle"]))
+            for i, im in enumerate((p.get("images") or [])[:8]):  # all product images, candidates for images.py
+                if im.get("src"): db.execute("INSERT OR REPLACE INTO image_srcs VALUES(?,?,?,?,?,?)",
+                                             (store["id"], p["handle"], i, im["src"], im.get("width"), im.get("height")))
             for v in p["variants"]:
                 if not v.get("price") or float(v["price"]) <= 0: continue  # $0 placeholders
                 vid = f"{store['id']}:{v['id']}"
