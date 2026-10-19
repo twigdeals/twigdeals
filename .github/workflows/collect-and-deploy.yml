@@ -1,0 +1,37 @@
+name: Collect prices and deploy
+on:
+  schedule:
+    - cron: "15 10,22 * * *"   # twice daily (10:15 and 22:15 UTC)
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: { group: collect, cancel-in-progress: false }
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    env:
+      HAS_CF: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Collect prices
+        run: python collector/collect.py
+      - name: Commit price history
+        run: |
+          git config user.name "twigdeals-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/prices.db
+          git commit -m "prices: $(date -u +%FT%TZ)" || echo "no changes"
+          git pull --rebase --autostash || true
+          git push
+      - name: Build site
+        run: python build.py
+      - name: Deploy to Cloudflare Pages
+        if: env.HAS_CF == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=twigdeals --branch=main

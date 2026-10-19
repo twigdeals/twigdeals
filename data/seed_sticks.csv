@@ -1,0 +1,41 @@
+brand,model,price_tier,max_senior_price_seen_CAD_or_USD,curves_seen,bauer_com,prohockeylife_ca,sourceforsports_ca,hockeystickman_com
+Bauer,"Vapor FlyLite",elite,439.99,"P28 P31 P88 P90T P90TM P92 PP9OTM",Y,Y,Y,Y
+Bauer,"Vapor Hyperlite",elite,349.99,"P28 P88 P92",Y,N,Y,Y
+Bauer,"Nexus Sync",mid,,"",N,N,N,Y
+Bauer,"Nexus Tracer",elite,369.99,"P28 P88 P90TM P92",Y,Y,Y,Y
+Bauer,"Nexus Geo",value,99.99,"",N,N,N,Y
+Bauer,"Supreme Mach",value,99.99,"",N,N,N,Y
+Bauer,"Supreme Shadow",mid,284.97,"P31 P34",Y,N,Y,Y
+Bauer,"Ag5nt",elite,369.99,"",Y,N,N,Y
+Bauer,"Vapor X5",value,159.99,"P28 P88 P92",N,N,Y,Y
+Bauer,"Vapor X4",mid,,"P28 P88 P92",N,Y,Y,N
+Bauer,"Pulse",elite,459.99,"P28 P88 P90TM P92",Y,Y,Y,Y
+Bauer,"Proto2",elite,459.99,"P28 P88 P90TM P92",Y,N,Y,N
+Bauer,"Bauer X",value,119.99,"P92",Y,N,Y,N
+CCM,"Jetspeed FT9",elite,439.99,"P28 P28+ P28+1 P29 P29+ P29+1 P88 P90TM",N,Y,Y,Y
+CCM,"Jetspeed FT8",elite,419.99,"P28 P28+1 P28M +1 P29 P29+1 P88 P90TM",N,Y,Y,Y
+CCM,"Jetspeed FT7",elite,419.99,"P28 P29 P88 P90TM",N,Y,Y,Y
+CCM,"Jetspeed FT6",mid,,"",N,N,Y,Y
+CCM,"Ribcor Trigger 8",value,179.99,"P28 P29",N,Y,N,Y
+CCM,"Ribcor Trigger 9",elite,419.99,"P28 P29 P88 P90TM",N,Y,Y,Y
+CCM,"Ribcor Trigger 10",elite,429.99,"P28 P28+1 P28M +1 P29 P29+1 P29M + 1 P88 P90TM",N,Y,Y,Y
+CCM,"Ribcor Trigger Unleashed",elite,439.99,"P28+ P28+1 P28M +1 P29+ P29+1 P29M + 1 P88 P90TM",N,Y,Y,Y
+CCM,"Tacks XF",elite,449.99,"P28 P28+1 P29 P29+1 P88 P90TM",N,Y,Y,Y
+CCM,"Tacks AS-V",mid,229.99,"P28 P29 P88 P90TM",N,N,N,Y
+CCM,"Vizion",elite,459.99,"P28 P28+ P28+1 P29 P29+ P29+1",N,Y,Y,Y
+CCM,"Super Tacks",value,169.99,"",N,N,N,Y
+Warrior,"Alpha LX2",mid,,"M03 M28 M88 W03 W28 W88",N,Y,N,Y
+Warrior,"Alpha LX3",elite,419.99,"M03 M28 W03 W28 W88 W90TM W9T",N,Y,Y,Y
+Warrior,"Covert QR5",mid,259.99,"W03 W28 W88",N,Y,Y,Y
+Warrior,"Covert QR6",elite,399.99,"M03 M28 W03 W28 W88",N,Y,Y,Y
+Warrior,"Covert QR7",elite,439.99,"M03 W02 W03 W28 W88 W9T",N,Y,Y,N
+Warrior,"Novium",elite,439.99,"M03 W03 W28 W88 W90TM W9T",N,Y,Y,Y
+True,"Catalyst 9X",elite,389.99,"T28 T31 T92.5 TC2 TC2-5 TC2.5T TC4",N,Y,N,Y
+True,"Hzrdus 9X",elite,399.99,"T27 T28 T90 T90T T92",N,Y,Y,Y
+True,"Hzrdus 7X",mid,299.99,"T27 T28 T90 T90T T92",N,Y,Y,Y
+True,"Hzrdus 5X",value,199.99,"T27 T28 T31 T92",N,Y,Y,N
+True,"Project X",elite,429.99,"T27 T28 T29 T92 T92.5",N,Y,Y,Y
+Sherwood,"Rekker Legend",mid,329.99,"P28 PP26MX PP28 PP31 PP34 PP41 PP88 PP90MX",N,Y,Y,Y
+Sherwood,"Rekker Morph",elite,349.99,"PP28 PP28 - 85 FLEX PP28MX PP31 PP34 PP41 PP88 PP90MX",N,Y,Y,Y
+Sherwood,"Code Encrypt",elite,339.99,"P28 P92 PP28 PP28MX PP90MX PP92 PP92M PP92MX",N,Y,Y,Y
+Sherwood,"Code TMP",value,89.99,"PP92",N,N,N,Y
