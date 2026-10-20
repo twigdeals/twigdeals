@@ -28,15 +28,15 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add data/prices.db data/fx.json
           git commit -m "prices: $(date -u +%FT%TZ)" || echo "no changes"
-          git pull --rebase -X theirs origin main
+          git pull --rebase --autostash -X theirs origin main
           git push
       - name: Build site (also fetches photos for new models)
         run: python build.py
       - name: Commit new product photos
         run: |
-          git add static/img data/images.json
+          git add static/img data/images.json data/fx.json
           git commit -m "photos: $(date -u +%FT%TZ)" || echo "no new photos"
-          git pull --rebase -X theirs origin main
+          git pull --rebase --autostash -X theirs origin main
           git push
       - name: Deploy to Cloudflare Pages
         if: env.HAS_CF == 'true'
