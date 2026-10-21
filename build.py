@@ -62,10 +62,14 @@ CSS_V = hashlib.md5((open(ROOT/"static/fonts/fonts.css").read()+CSS).encode()).h
 
 LOGO = """<span class="logo-lock"><img class="wm" src="/wordmark.svg" alt="Twig Deals" width="74" height="46"></span>"""
 
-def page(title, body, desc=""):
+def ld(obj):
+    """schema.org JSON-LD <script>; '</' escaped so data can never close the tag."""
+    return '<script type="application/ld+json">' + json.dumps(obj, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/") + "</script>"
+
+def page(title, body, desc="", head=""):
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(title)}</title><meta name="description" content="{e(desc or TAGLINE)}"><meta name="theme-color" content="#0E0F11"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta property="og:type" content="website"><meta property="og:site_name" content="Twig Deals"><meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc or TAGLINE)}"><meta property="og:image" content="https://twigdeals.com/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://twigdeals.com/og.png">
-<link rel="preload" href="/fonts/BarlowCondensed-800.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/style.css?v={CSS_V}"><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{{"token": "84d077f07747412a876284c5975f5122"}}'></script></head><body>
+<link rel="preload" href="/fonts/BarlowCondensed-800.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/style.css?v={CSS_V}"><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{{"token": "84d077f07747412a876284c5975f5122"}}'></script>{head}</head><body>
 <header class="top"><div class="w bar"><a class="logo" href="/">{LOGO}</a><nav><a href="/sticks/">Sticks</a><a href="/curves/">Curve + flex</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">Sale calendar</a><a href="/about/">About</a><a class="nav-cta" href="#newsletter">Weekly drops</a></nav></div></header>
 <main>{body}{NEWSLETTER}</main><footer><div class="w foot"><div>{LOGO}<p>Hockey stick price tracker. Prices are pulled from retailer sites twice a day and can change; confirm on the store page before you buy. Some links earn us a commission at no cost to you. CAD and USD are shown as listed, not converted.</p><p>Stores tracked: {e(", ".join(n for _, n, _, _ in STORES))}.</p></div><div class="flinks"><a href="/sticks/">All sticks</a><a href="/curves/">Curve + flex</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">When sticks go on sale</a><a href="/about/">About + stores</a></div></div></footer></body></html>"""
 
@@ -168,7 +172,18 @@ def main():
 <ol class="deals">{"".join(card(v) for v in top) or "<li>No drops of 10%+ right now.</li>"}</ol></section>
 <section class="w block split"><div><div class="sec-head"><h2>Shop your spec</h2><p>Pick the curve and flex you already play.</p></div><div class="chips">{"".join(f'<a href="{p}">{e(t)}</a>' for p,t in POPULAR[:18])}</div></div>
 <div><div class="sec-head"><h2>Every model</h2></div><ul class="index">{"".join(f'<li><a href="/sticks/{s}/"><span>{e(b)}</span> {e(m)}</a></li>' for s,b,m in sorted(models, key=lambda k:(k[1],k[2])))}</ul></div></section>"""
-    write("/", page(f"{SITE}: hockey stick price tracker", body, "Track hockey stick prices and the best drops this week across Bauer, CCM, Warrior, True and Sherwood."))
+    home_ld = ld({"@context": "https://schema.org", "@graph": [
+        {"@type": "WebSite", "@id": "https://twigdeals.com/#website", "name": SITE, "url": "https://twigdeals.com/", "description": "Hockey stick price tracker: current and lowest-ever prices by curve, flex and hand at " + str(len(STORES)) + " stores.", "publisher": {"@id": "https://twigdeals.com/#org"}, "inLanguage": "en"},
+        {"@type": "Organization", "@id": "https://twigdeals.com/#org", "name": SITE, "url": "https://twigdeals.com/", "logo": "https://twigdeals.com/icon-512.png", "sameAs": [BEEHIIV_BASE_URL]}]})
+    write("/", page(f"{SITE}: hockey stick price tracker", body, "Track hockey stick prices and the best drops this week across Bauer, CCM, Warrior, True and Sherwood.", home_ld))
+    # Machine-readable current top deals (same list as the homepage)
+    (OUT / "deals.json").write_text(json.dumps({"site": SITE, "url": "https://twigdeals.com/", "updated": last_ts,
+        "note": "Best in-stock price cut per model, new sticks only, 10%+ off. Prices in the store's listed currency. reference_price is the 7-day high or the store's list price (see drop_basis). Confirm on the store page before buying.",
+        "deals": [{"brand": v["brand"], "model": v["model"], "stick_page": f"https://twigdeals.com/sticks/{v['model_slug']}/", "store": STORE_NAMES[v["store"]],
+                   "size": v["size"], "curve": v["curve"], "flex": v["flex"], "hand": v["hand"], "price": v["price"], "currency": v["currency"],
+                   "list_price": v["compare_at"] if v["compare_at"] and v["compare_at"] > v["price"] else None,
+                   "reference_price": round(v["price"] + v["drop"], 2), "percent_off": v["drop_pct"], "drop_basis": v["drop_basis"],
+                   "store_url": v["url"]} for v in top]}, indent=1))
 
     # Stick index + pages
     idx_rows = "".join(f'''<tr><td class="brand-c">{e(b)}</td><td><a href="/sticks/{s}/">{e(m)}</a></td><td class="num">{len(vl)}</td><td class="num">{sum(1 for v in vl if v["available"])}</td>
@@ -217,7 +232,25 @@ def main():
 <p class="lede">Tracking {len(vl)} variants at {", ".join(stores)}. New sticks and pro stock are kept separate, and lowest-ever counts new sticks only. {fxnote}</p></div>{photo}</div>
 <dl class="figs">{figs}</dl><h2 class="h2">Price history</h2>{chart(series)}<h2 class="h2">Every variant: senior first, cheapest in stock first</h2>
 <div class="tw"><table><thead><tr><th>Store</th><th>Size</th><th>Curve</th><th class="num">Flex</th><th>Hand</th><th class="num">Price</th><th class="num">Low</th><th>Stock</th><th></th></tr></thead><tbody>{tr}</tbody></table></div></div>'''
-        write(f"/sticks/{s}/", page(f"{b} {m} price tracker: lowest price by curve & flex | {SITE}", body, f"Current and lowest-ever prices for the {b} {m} hockey stick by curve, flex and hand."))
+        desc = f"Current and lowest-ever prices for the {b} {m} hockey stick by curve, flex and hand."
+        # One Offer per store: its cheapest new (non-pro-stock) variant. Currency as the store lists it.
+        per = {}
+        for v in new:
+            k = v["store"]
+            if k not in per or ({1: 0, None: 1, 0: 2}[v["available"]], v["price"]) < ({1: 0, None: 1, 0: 2}[per[k]["available"]], per[k]["price"]): per[k] = v
+        offers = []
+        for v in sorted(per.values(), key=lambda v: STORE_NAMES[v["store"]]):
+            o = {"@type": "Offer", "price": f'{v["price"]:.2f}', "priceCurrency": v["currency"], "url": v["url"], "seller": {"@type": "Organization", "name": STORE_NAMES[v["store"]]}, "itemCondition": "https://schema.org/NewCondition"}
+            if v["available"] is not None: o["availability"] = "https://schema.org/" + ("InStock" if v["available"] else "OutOfStock")
+            offers.append(o)
+        prod = {"@context": "https://schema.org", "@type": "Product", "name": f"{b} {m} hockey stick", "brand": {"@type": "Brand", "name": b}, "url": f"https://twigdeals.com/sticks/{s}/", "description": desc}
+        if ph: prod["image"] = "https://twigdeals.com" + ph["file"]
+        curs = {o["priceCurrency"] for o in offers}
+        if len(curs) == 1 and offers:
+            ps = [float(o["price"]) for o in offers]
+            prod["offers"] = {"@type": "AggregateOffer", "priceCurrency": curs.pop(), "lowPrice": f"{min(ps):.2f}", "highPrice": f"{max(ps):.2f}", "offerCount": len(offers), "offers": offers}
+        elif offers: prod["offers"] = offers
+        write(f"/sticks/{s}/", page(f"{b} {m} price tracker: lowest price by curve & flex | {SITE}", body, desc, ld(prod)))
 
     links = []
     for (c, f, sz), vl in sorted(combos.items()):
@@ -249,7 +282,44 @@ Sources: <a href="https://www.reddit.com/r/hockeyplayers/comments/szj2o9/best_ti
 <h2>How we collect</h2><p>Twice a day, our collector reads each store's public product feed. It identifies itself as TwigDealsBot, checks the store's robots.txt first, and waits between requests. A store that asks us not to read its feed is skipped.</p>
 <h2>Links</h2><p>Store links go straight to the product page. Some links may earn us a commission at no cost to you; that never changes the order or the prices we show. Prices change quickly, so confirm on the store page before you buy.</p></article>"""
     write("/about/", page(f"About Twig Deals and the stores we track | {SITE}", about, f"How Twig Deals tracks hockey stick prices at {len(STORES)} stores: {', '.join(n for _, n, _, _ in STORES)}."))
-    (OUT / "robots.txt").write_text("User-agent: *\nAllow: /\nSitemap: https://twigdeals.com/sitemap.xml\n")
+    AI_BOTS = ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "PerplexityBot", "Perplexity-User", "ClaudeBot", "Claude-User", "Claude-SearchBot", "Google-Extended", "Applebot-Extended", "Applebot"]
+    (OUT / "robots.txt").write_text("# AI search and assistant crawlers are welcome. Machine-readable summary: https://twigdeals.com/llms.txt\n"
+        + "".join(f"User-agent: {u}\nAllow: /\n\n" for u in AI_BOTS) + "User-agent: *\nAllow: /\n\nSitemap: https://twigdeals.com/sitemap.xml\n")
+    (OUT / "llms.txt").write_text(f"""# Twig Deals
+
+> Twig Deals (twigdeals.com) is an independent hockey stick price tracker. It checks player stick prices at {len(STORES)} online stores twice a day, curve by curve and flex by flex, keeps the price history, and shows the biggest real price drops. Twig Deals is not affiliated with any stick brand or retailer, including Twig Hockey Company.
+
+Currently tracking {len(models)} stick models and {len(live):,} live variants (size, curve, flex, hand) from Bauer, CCM, Warrior, True and Sherwood. Last updated {upd:%b %-d, %Y %-I:%M %p} ET.
+
+## How prices are measured
+
+- Updated twice daily, at about 6:15 AM and 6:15 PM Eastern Time, by reading each store's public product feed (crawler: TwigDealsBot, respects robots.txt).
+- Prices are shown in the currency each store lists (CAD or USD), not converted. Stick-page headline figures convert CAD to USD at the Bank of Canada daily rate for comparison only.
+- "% off" is measured against the higher of the stick's 7-day high price or the store's own list (compare-at) price.
+- "Lowest ever" is the lowest price seen since tracking began on Oct 18, 2026, new sticks only. Pro stock / used sticks are tagged separately and never count toward lowest-ever.
+- Prices change quickly; always confirm on the store page before buying. Some store links earn a commission; this never changes ordering or prices.
+
+## Stores tracked
+
+""" + "".join(f"- [{n}]({u}): lists in {c}\n" for _, n, u, c in STORES) + f"""
+## Key pages
+
+- [Home: this week's biggest drops](https://twigdeals.com/)
+- [All tracked sticks](https://twigdeals.com/sticks/): one page per model with every variant, current price, lowest-ever price and stock at each store
+- [Deals by curve and flex](https://twigdeals.com/curves/)
+- [When do hockey sticks go on sale?](https://twigdeals.com/guides/when-do-hockey-sticks-go-on-sale/)
+- [About and methodology](https://twigdeals.com/about/)
+- [Sitemap](https://twigdeals.com/sitemap.xml)
+
+## Data
+
+- [Current top deals (JSON)](https://twigdeals.com/deals.json): best in-stock cut per model with stick, store, price, currency, list price, % off, URL and update timestamp
+- Stick pages include schema.org Product JSON-LD with one Offer per store.
+
+## Optional
+
+- [Weekly "drop sheet" newsletter](https://twigdeals.beehiiv.com/subscribe): free email every Thursday with the biggest price cuts
+""")
     urls = [str(p.parent.relative_to(OUT)) for p in OUT.rglob("index.html")]
     (OUT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
         "".join(f"<url><loc>https://twigdeals.com/{'' if u=='.' else u+'/'}</loc></url>" for u in urls) + "</urlset>")
