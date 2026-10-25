@@ -209,6 +209,12 @@
   "v": 3,
   "w": 697
  },
+ "ccm-jetspeed-ft655": {
+  "rejected": [
+   "https://img.inlinewarehouse.com/watermark/rs.php?path=FT655-1.jpg&dg=-90&nw=550"
+  ],
+  "v": 3
+ },
  "ccm-jetspeed-ft660": {
   "file": "/img/models/ccm-jetspeed-ft660.webp",
   "h": 767,
@@ -994,6 +1000,13 @@
   "store": "sportsexcellence",
   "v": 3,
   "w": 800
+ },
+ "sherwood-rekker-morph-max": {
+  "rejected": [
+   "https://img.inlinewarehouse.com/watermark/rs.php?path=MMSW-1.jpg&dg=-90&nw=550",
+   "https://img.inlinewarehouse.com/watermark/rs.php?path=SMORM-1.jpg&dg=-90&nw=550"
+  ],
+  "v": 3
  },
  "sherwood-rekker-morph-pro": {
   "file": "/img/models/sherwood-rekker-morph-pro.webp",
