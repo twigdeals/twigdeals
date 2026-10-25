@@ -26,6 +26,8 @@ STORES = [
     ("thehockeyshop", "TheHockeyShop.com", "https://www.thehockeyshop.com", "CAD"),
     ("hockeytron", "HockeyTron", "https://hockeytron.com", "USD"),
     ("sportsexcellence", "Sports Excellence", "https://sportsexcellence.com", "CAD"),
+    ("icewarehouse", "Ice Warehouse", "https://www.icewarehouse.com", "USD"),
+    ("hockeymonkey", "Hockey Monkey", "https://www.hockeymonkey.com", "USD"),
 ]
 STORE_NAMES = {i: n for i, n, _, _ in STORES}
 # Beehiiv subscribe page. Change only here if the subdomain is renamed.

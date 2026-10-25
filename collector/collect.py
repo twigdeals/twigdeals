@@ -174,49 +174,65 @@ def init(db):
     CREATE TABLE IF NOT EXISTS runs(ts TEXT, store TEXT, products INTEGER, matched INTEGER, variants INTEGER, status TEXT);
     """)
 
-def collect_store(db, store, models, ts):
-    if not allowed(store["base"]):
-        db.execute("INSERT INTO runs VALUES(?,?,?,?,?,?)", (ts, store["id"], 0, 0, 0, "blocked by robots.txt")); return
-    nprod = nmatch = nvar = 0; status = "ok"
+def shopify_pages(store):
+    """Yield lists of Shopify products from /products.json."""
     for page in range(1, MAX_PAGES + 1):
         try:
             data = get(f"{store['base']}/products.json?limit=250&page={page}")
         except Exception as e:
-            status = f"error page {page}: {e}"; break
+            raise RuntimeError(f"page {page}: {e}")
         prods = data.get("products", [])
-        if not prods: break
-        nprod += len(prods)
-        for p in prods:
-            hit = match(p, store, models)
-            if not hit: continue
-            m, tname, size, pro = hit; title = p["title"]
-            nmatch += 1
-            img = (p.get("images") or [None])[0]
-            if img and img.get("src"):  # first product image; build.py picks one per model and hosts it itself
-                db.execute("INSERT OR REPLACE INTO images VALUES(?,?,?,?,?,?,?,?,?,?)", (store["id"], p["handle"],
-                          slug(m["brand"] + " " + tname), title, size, pro, img["src"], img.get("width"), img.get("height"), ts))
-            db.execute("DELETE FROM image_srcs WHERE store=? AND handle=?", (store["id"], p["handle"]))
-            for i, im in enumerate((p.get("images") or [])[:8]):  # all product images, candidates for images.py
-                if im.get("src"): db.execute("INSERT OR REPLACE INTO image_srcs VALUES(?,?,?,?,?,?)",
-                                             (store["id"], p["handle"], i, im["src"], im.get("width"), im.get("height")))
-            for v in p["variants"]:
-                if not v.get("price") or float(v["price"]) <= 0: continue  # $0 placeholders
-                vid = f"{store['id']}:{v['id']}"
-                hand, flex, curve = specs(p, v)
-                vsize = size or size_of("", "", options=" ".join(str(v.get(f"option{i}") or "") for i in (1, 2, 3)), flex=flex)
-                row = (vid, store["id"], slug(m["brand"] + " " + tname), m["brand"], tname, title,
-                       f"{store['base']}/products/{p['handle']}?variant={v['id']}", vsize,
-                       hand, flex, brand_curve(curve, m["brand"]),
-                       store["currency"], pro, ts, ts)
-                db.execute("""INSERT INTO variants VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-                   ON CONFLICT(id) DO UPDATE SET last_seen=excluded.last_seen, product_title=excluded.product_title, size=excluded.size, hand=excluded.hand, flex=excluded.flex, curve=excluded.curve, pro_stock=excluded.pro_stock, model=excluded.model, model_slug=excluded.model_slug""", row)
-                ca = float(v["compare_at_price"]) if v.get("compare_at_price") else None
-                new = (float(v["price"]), ca, 1 if v.get("available") else 0)
-                last = db.execute("SELECT price, compare_at, available FROM prices WHERE variant_id=? ORDER BY ts DESC LIMIT 1", (vid,)).fetchone()
-                if last != new:  # store changes only; variants.last_seen records each check
-                    db.execute("INSERT INTO prices VALUES(?,?,?,?,?)", (vid, ts, *new))
-                nvar += 1
+        if not prods: return
+        yield prods
         time.sleep(DELAY)
+
+def save_product(db, store, models, ts, p):
+    """Match one Shopify-shaped product and record its variants. -> number of variants saved, or None if unmatched."""
+    hit = match(p, store, models)
+    if not hit: return None
+    m, tname, size, pro = hit; title = p["title"]
+    img = (p.get("images") or [None])[0]
+    if img and img.get("src"):  # first product image; build.py picks one per model and hosts it itself
+        db.execute("INSERT OR REPLACE INTO images VALUES(?,?,?,?,?,?,?,?,?,?)", (store["id"], p["handle"],
+                  slug(m["brand"] + " " + tname), title, size, pro, img["src"], img.get("width"), img.get("height"), ts))
+    db.execute("DELETE FROM image_srcs WHERE store=? AND handle=?", (store["id"], p["handle"]))
+    for i, im in enumerate((p.get("images") or [])[:8]):  # all product images, candidates for images.py
+        if im.get("src"): db.execute("INSERT OR REPLACE INTO image_srcs VALUES(?,?,?,?,?,?)",
+                                     (store["id"], p["handle"], i, im["src"], im.get("width"), im.get("height")))
+    n = 0
+    for v in p["variants"]:
+        if not v.get("price") or float(v["price"]) <= 0: continue  # $0 placeholders
+        vid = f"{store['id']}:{v['id']}"
+        hand, flex, curve = specs(p, v)
+        hint = size_of("", options=v["size_hint"]) if v.get("size_hint") else None  # per-SKU size (Ice Warehouse "Age Range")
+        vsize = hint or size or size_of("", "", options=" ".join(str(v.get(k) or "") for k in ("option1", "option2", "option3", "size_hint")), flex=flex)
+        row = (vid, store["id"], slug(m["brand"] + " " + tname), m["brand"], tname, title,
+               v.get("url") or f"{store['base']}/products/{p['handle']}?variant={v['id']}", vsize,
+               hand, flex, brand_curve(curve, m["brand"]),
+               store["currency"], pro, ts, ts)
+        db.execute("""INSERT INTO variants VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+           ON CONFLICT(id) DO UPDATE SET last_seen=excluded.last_seen, product_title=excluded.product_title, size=excluded.size, hand=excluded.hand, flex=excluded.flex, curve=excluded.curve, pro_stock=excluded.pro_stock, model=excluded.model, model_slug=excluded.model_slug, url=excluded.url""", row)
+        ca = float(v["compare_at_price"]) if v.get("compare_at_price") else None
+        new = (float(v["price"]), ca, 1 if v.get("available") else 0)
+        last = db.execute("SELECT price, compare_at, available FROM prices WHERE variant_id=? ORDER BY ts DESC LIMIT 1", (vid,)).fetchone()
+        if last != new:  # store changes only; variants.last_seen records each check
+            db.execute("INSERT INTO prices VALUES(?,?,?,?,?)", (vid, ts, *new))
+        n += 1
+    return n
+
+def collect_store(db, store, models, ts):
+    pages = store.get("pages", shopify_pages)
+    if not allowed(store["base"], store.get("probe", "/products.json")):
+        db.execute("INSERT INTO runs VALUES(?,?,?,?,?,?)", (ts, store["id"], 0, 0, 0, "blocked by robots.txt")); return
+    nprod = nmatch = nvar = 0; status = "ok"
+    try:
+        for prods in pages(store):
+            nprod += len(prods)
+            for p in prods:
+                n = save_product(db, store, models, ts, p)
+                if n is not None: nmatch += 1; nvar += n
+    except Exception as e:  # one store failing must not stop the others
+        status = f"error: {e}"[:300]
     db.execute("INSERT INTO runs VALUES(?,?,?,?,?,?)", (ts, store["id"], nprod, nmatch, nvar, status))
     print(f"{store['name']}: {nprod} products scanned, {nmatch} matched, {nvar} variants, {status}")
 
@@ -247,8 +263,10 @@ def main():
     db = sqlite3.connect(DB); init(db)
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     models = load_models()
-    for s in STORES:
-        collect_store(db, s, models, ts); db.commit()
+    import stores_html
+    for s in STORES + stores_html.STORES:
+        try: collect_store(db, s, models, ts); db.commit()
+        except Exception as e: db.rollback(); print(f"{s['name']}: FAILED {e}")
     db.close()
 
 if __name__ == "__main__":

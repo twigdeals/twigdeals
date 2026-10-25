@@ -1,5 +1,5 @@
 {
-  "_note": "Per-store affiliate link templates. {url} = product URL (URL-encoded as {url_enc}). Empty = plain link. Just Hockey is on AvantLink; add its template only after approval.",
+  "_note": "Per-store affiliate link templates. {url} = product URL (URL-encoded as {url_enc}). Empty = plain link. Just Hockey is on AvantLink; add its template only after approval. Ice Warehouse (Awin) and Hockey Monkey (Ascend) are plain links until approved.",
   "bauer": "",
   "prohockeylife": "",
   "sourceforsports": "",
@@ -8,5 +8,7 @@
   "discounthockey": "",
   "thehockeyshop": "",
   "hockeytron": "",
-  "sportsexcellence": ""
+  "sportsexcellence": "",
+  "icewarehouse": "",
+  "hockeymonkey": ""
 }
