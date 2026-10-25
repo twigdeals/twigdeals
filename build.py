@@ -176,7 +176,7 @@ def main():
     body = f"""<section class="hero"><div class="w"><p class="kicker">Updated {upd:%b %-d, %Y} · {upd:%-I:%M %p} ET</p>
 <h1>Stop paying<br>full price for<br>a <em>twig.</em></h1>
 <p class="lede">We check every stick at {len(STORE_NAMES)} stores twice a day, curve by curve and flex by flex, and show you what actually dropped.</p>
-<dl class="figs"><div><dt>Models tracked</dt><dd>{len(models)}</dd></div><div><dt>Variants</dt><dd>{len(live):,}</dd></div><div><dt>In stock now</dt><dd>{n_instock:,}</dd></div><div><dt>Stores</dt><dd>{len({v["store"] for v in live})}</dd></div></dl></div></section>
+<dl class="figs"><div><dt>Models tracked</dt><dd>{len(models)}</dd></div><div><dt>Variants</dt><dd>{len(live):,}</dd></div><div><dt>In stock now</dt><dd>{n_instock:,}</dd></div><div><dt>Stores</dt><dd>{len(STORES)}</dd></div></dl></div></section>
 <section class="w block"><div class="sec-head"><h2>This week's biggest drops</h2><p>Best in-stock cut per model, new sticks only. % is vs. the 7-day high or the store's own list price.</p></div>
 <ol class="deals">{"".join(card(v) for v in top) or "<li>No drops of 10%+ right now.</li>"}</ol></section>
 <section class="w block split"><div><div class="sec-head"><h2>Shop your spec</h2><p>Pick the curve and flex you already play.</p></div><div class="chips">{"".join(f'<a href="{p}">{e(t)}</a>' for p,t in POPULAR[:18])}</div></div>
