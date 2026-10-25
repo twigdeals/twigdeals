@@ -64,6 +64,9 @@ HM = "https://www.hockeymonkey.com"
 HM_CATS = ["ice-hockey/sticks/composite/senior", "ice-hockey/sticks/composite/intermediate", "ice-hockey/sticks/composite/junior"]
 HM_DELAY = 10.0
 HM_MAX_PAGES = 15
+# National-team graphic editions ("... Senior Hockey Stick - International", "- Canada") are limited runs with their
+# own pricing; left in, they would undercut the regular model. Skipped.
+HM_EDITION = re.compile(r"\s-\s*(International|USA|Canada|Finland|Sweden|Germany|Switzerland|Czechia|Slovakia|Latvia|Denmark|Norway|Austria)\s*$", re.I)
 
 def hm_parse(page):
     configs = {}
@@ -98,6 +101,7 @@ def hm_parse(page):
         if not variants:
             variants = [dict(id=pid, price=str(item["price"]), compare_at_price=None, url=url,
                              available=item.get("item_stock_status", "").lower() == "in stock")]
+        if HM_EDITION.search(html.unescape(item["item_name"])): continue
         prods.append(dict(title=html.unescape(item["item_name"]), product_type="Hockey Stick", vendor=item.get("item_brand", ""),
                           handle=pid, tags="", options=[{"name": "Hand"}, {"name": "Flex"}, {"name": "Curve"}],
                           variants=variants, images=[{"src": img.group(1)}] if img else []))

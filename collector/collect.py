@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Twig Deals price collector: Shopify /products.json -> SQLite price history."""
-import csv, json, re, sqlite3, sys, time, urllib.request, urllib.robotparser
+import csv, json, re, sqlite3, sys, time, urllib.error, urllib.request, urllib.robotparser
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -38,16 +38,31 @@ def clean_title(title):
     for rx, sub in ALIASES: t = rx.sub(sub, t)
     return t
 
-def get(url):
+def get(url, tries=3):
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/json"})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.loads(r.read())
+    for i in range(tries):
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                return json.loads(r.read())
+        except urllib.error.HTTPError as e:  # Shopify 503/429 under load: back off and retry
+            if e.code not in (429, 500, 502, 503, 504) or i == tries - 1: raise
+            time.sleep(20 * (i + 1))
 
 def allowed(base, path="/products.json"):
-    rp = urllib.robotparser.RobotFileParser(base + "/robots.txt")
-    try: rp.read()
-    except Exception: return True
-    return rp.can_fetch(UA, base + path)
+    """True/False from robots.txt; None if robots.txt could not be read (server error), so the store is retried next run."""
+    for i in range(3):
+        try:
+            req = urllib.request.Request(base + "/robots.txt", headers={"User-Agent": UA})
+            with urllib.request.urlopen(req, timeout=30) as r: lines = r.read().decode("utf-8", "replace").splitlines()
+        except urllib.error.HTTPError as e:
+            if e.code in (401, 403): return False
+            if e.code < 500: return True  # no robots.txt
+            time.sleep(20 * (i + 1)); continue
+        except Exception:
+            time.sleep(20 * (i + 1)); continue
+        rp = urllib.robotparser.RobotFileParser(); rp.parse(lines)
+        return rp.can_fetch(UA, base + path)
+    return None
 
 def load_models():
     rows = list(csv.DictReader(open(SEED)))
@@ -222,8 +237,10 @@ def save_product(db, store, models, ts, p):
 
 def collect_store(db, store, models, ts):
     pages = store.get("pages", shopify_pages)
-    if not allowed(store["base"], store.get("probe", "/products.json")):
-        db.execute("INSERT INTO runs VALUES(?,?,?,?,?,?)", (ts, store["id"], 0, 0, 0, "blocked by robots.txt")); return
+    ok = allowed(store["base"], store.get("probe", "/products.json"))
+    if not ok:
+        status = "blocked by robots.txt" if ok is False else "robots.txt unreachable"
+        db.execute("INSERT INTO runs VALUES(?,?,?,?,?,?)", (ts, store["id"], 0, 0, 0, status)); print(f"{store['name']}: skipped, {status}"); return
     nprod = nmatch = nvar = 0; status = "ok"
     try:
         for prods in pages(store):
@@ -256,7 +273,23 @@ def resize():
         if sz: db.execute("UPDATE variants SET size=? WHERE id=?", (sz, vid)); n += 1
     db.commit(); print(f"resized {n} variants; {db.execute('SELECT count(*) FROM variants WHERE size IS NULL').fetchone()[0]} still unsized")
 
+GOALIE_CURVE = re.compile(r"^\s*(Left|Right)\s*-\s*[PT]3[0-9]\b", re.I)  # HockeyStickMan goalie pro stock: "Left - P31"
+
+def purge():
+    """Delete stored rows that are not player sticks: titles hitting EXCLUDE, goalie curves,
+    and Hockey Monkey national-team editions."""
+    from stores_html import HM_EDITION
+    db = sqlite3.connect(DB); ids = []
+    cutoff = datetime.fromtimestamp(time.time() - 5 * 86400, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    for vid, store, title, curve, size, seen in db.execute("SELECT id, store, product_title, curve, size, last_seen FROM variants").fetchall():
+        if (size is None and seen < cutoff) or EXCLUDE.search(title or "") or GOALIE_CURVE.match(curve or "") or (store == "hockeymonkey" and HM_EDITION.search(title or "")):
+            ids.append((vid,))
+    db.executemany("DELETE FROM prices WHERE variant_id=?", ids); db.executemany("DELETE FROM variants WHERE id=?", ids)
+    db.execute("DELETE FROM images WHERE model_slug NOT IN (SELECT DISTINCT model_slug FROM variants)")
+    db.commit(); print(f"purged {len(ids)} variants")
+
 def main():
+    if "--purge" in sys.argv: return purge()
     if "--retier" in sys.argv: return retier()
     if "--resize" in sys.argv: return resize()
     DB.parent.mkdir(exist_ok=True)
