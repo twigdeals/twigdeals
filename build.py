@@ -167,7 +167,8 @@ def main():
     # Same size rule as stick pages: senior variants when the model has any, else all sizes.
     cands = defaultdict(list)
     for v in live:
-        if v["available"] and v["drop_pct"] >= 10 and not v["pro_stock"]: cands[v["model_slug"]].append(v)
+        # Deals only from rows confirmed in stock by the latest run; rows carried over from an earlier run are excluded.
+        if v["available"] and v["last_seen"] == last_ts and v["drop_pct"] >= 10 and not v["pro_stock"]: cands[v["model_slug"]].append(v)
     best = {k: max([v for v in vl if v["size"] == "Senior"] or vl, key=lambda v: v["drop_pct"]) for k, vl in cands.items()}
     top = sorted(best.values(), key=lambda v: -v["drop_pct"])[:24]
     n_instock = sum(1 for v in live if v["available"])
