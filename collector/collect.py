@@ -91,12 +91,23 @@ def tier_name(model, title):
         name = "Super " + name
     return name
 
-def size_of(title, ptype):
-    t = f"{title} {ptype}".lower()
-    for k, v in [("senior", "Senior"), (" sr", "Senior"), ("intermediate", "Intermediate"), (" int", "Intermediate"),
-                 ("junior", "Junior"), (" jr", "Junior"), ("youth", "Youth"), ("yth", "Youth")]:
-        if k in t: return v
-    return None
+SIZE_WORDS = [(r"senior|sr", "Senior"), (r"intermediate|int", "Intermediate"), (r"junior|jr", "Junior"), (r"youth|yth", "Youth")]
+
+def size_from_flex(flex):
+    """Fallback when a store never names the size: 75+ Senior, 55-70 Intermediate, 30-50 Junior, under 30 Youth."""
+    m = re.match(r"\s*(\d{2,3})", str(flex or ""))
+    if not m: return None
+    f = int(m.group(1))
+    return "Senior" if f >= 75 else "Intermediate" if f >= 55 else "Junior" if f >= 30 else "Youth"
+
+def size_of(title, ptype="", handle="", tags="", options="", flex=None):
+    """Size from the title/type, then variant options, handle and tags, then flex."""
+    for text in (f"{title} {ptype}", options, (handle or "").replace("-", " "),
+                 " ".join(tags) if isinstance(tags, list) else (tags or "")):
+        t = (text or "").lower()
+        for k, v in SIZE_WORDS:
+            if re.search(r"(?<![a-z])(?:" + k + r")(?![a-z])", t): return v
+    return size_from_flex(flex)
 
 def opt(product, variant, pattern):
     for i, o in enumerate(product.get("options", [])[:3]):
@@ -147,7 +158,7 @@ def match(p, store, models):
                    or store["id"] == "bauer")), None)
     if not m: return None
     pro = 1 if re.search(r"pro stock|pro return|used|refurb", f"{title} {ptype}", re.I) else 0
-    return m, tier_name(m["model"], title), size_of(title, ptype), pro
+    return m, tier_name(m["model"], title), size_of(title, ptype, p.get("handle", ""), p.get("tags", "")), pro
 
 def init(db):
     db.executescript("""
@@ -192,8 +203,9 @@ def collect_store(db, store, models, ts):
                 if not v.get("price") or float(v["price"]) <= 0: continue  # $0 placeholders
                 vid = f"{store['id']}:{v['id']}"
                 hand, flex, curve = specs(p, v)
+                vsize = size or size_of("", "", options=" ".join(str(v.get(f"option{i}") or "") for i in (1, 2, 3)), flex=flex)
                 row = (vid, store["id"], slug(m["brand"] + " " + tname), m["brand"], tname, title,
-                       f"{store['base']}/products/{p['handle']}?variant={v['id']}", size,
+                       f"{store['base']}/products/{p['handle']}?variant={v['id']}", vsize,
                        hand, flex, brand_curve(curve, m["brand"]),
                        store["currency"], pro, ts, ts)
                 db.execute("""INSERT INTO variants VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
@@ -219,8 +231,18 @@ def retier():
         db.execute("UPDATE variants SET model=?, model_slug=? WHERE id=?", (t, slug(brand + " " + t), vid)); n += 1
     db.commit(); print(f"retiered {n} variants")
 
+def resize():
+    """Backfill missing sizes for stored variants from title, URL handle and flex."""
+    db = sqlite3.connect(DB); n = 0
+    for vid, title, url, flex in db.execute("SELECT id, product_title, url, flex FROM variants WHERE size IS NULL").fetchall():
+        handle = re.sub(r"\?.*", "", url or "").rstrip("/").rsplit("/", 1)[-1]
+        sz = size_of(title or "", "", handle, "", "", flex)
+        if sz: db.execute("UPDATE variants SET size=? WHERE id=?", (sz, vid)); n += 1
+    db.commit(); print(f"resized {n} variants; {db.execute('SELECT count(*) FROM variants WHERE size IS NULL').fetchone()[0]} still unsized")
+
 def main():
     if "--retier" in sys.argv: return retier()
+    if "--resize" in sys.argv: return resize()
     DB.parent.mkdir(exist_ok=True)
     db = sqlite3.connect(DB); init(db)
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")

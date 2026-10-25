@@ -6,7 +6,9 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 import urllib.request
-import images
+import images, sys
+sys.path.insert(0, str(Path(__file__).resolve().parent / "collector"))
+from collect import size_from_flex
 ET = ZoneInfo("America/New_York")
 STOCK_UNKNOWN = {"sourceforsports"}  # feed reports every variant available; not trustworthy
 
@@ -125,6 +127,7 @@ def main():
     week_ago = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
     for vid, v in vs.items():
         h = hist[vid]; cur = h[-1]
+        v["size"] = v["size"] or size_from_flex(v["flex"])  # same flex fallback as the collector
         v.update(price=cur["price"], compare_at=cur["compare_at"], available=(None if v["store"] in STOCK_UNKNOWN else cur["available"]), current=v["last_seen"] == last_ts,
                  lowest=min(x["price"] for x in h), curve_n=norm_curve(v["curve"]))
         wk = [x["price"] for x in h if x["ts"] >= week_ago and x["ts"] != cur["ts"]]
@@ -155,11 +158,11 @@ def main():
     combos = {k: vl for k, vl in combos.items() if len(vl) >= 4}
     POPULAR = sorted(((f"/curves/{cslug(c)}-{f}-flex-{slug(sz)}/", f"{c} · {f} · {sz[:3].upper()}") for (c,f,sz),vl in combos.items() if sz=="Senior"), key=lambda t: -len(combos[next(k for k in combos if f"/curves/{cslug(k[0])}-{k[1]}-flex-{slug(k[2])}/"==t[0])]))
     # Homepage: best in-stock drop per model, new (non-pro-stock) sticks only
-    best = {}
+    # Same size rule as stick pages: senior variants when the model has any, else all sizes.
+    cands = defaultdict(list)
     for v in live:
-        if v["available"] and v["drop_pct"] >= 10 and not v["pro_stock"]:
-            k = v["model_slug"]
-            if k not in best or v["drop_pct"] > best[k]["drop_pct"]: best[k] = v
+        if v["available"] and v["drop_pct"] >= 10 and not v["pro_stock"]: cands[v["model_slug"]].append(v)
+    best = {k: max([v for v in vl if v["size"] == "Senior"] or vl, key=lambda v: v["drop_pct"]) for k, vl in cands.items()}
     top = sorted(best.values(), key=lambda v: -v["drop_pct"])[:24]
     n_instock = sum(1 for v in live if v["available"])
     upd = datetime.strptime(last_ts, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc).astimezone(ET)
