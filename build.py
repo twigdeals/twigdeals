@@ -64,6 +64,34 @@ CSS = open(ROOT / "static/site.css").read()
 import hashlib
 CSS_V = hashlib.md5((open(ROOT/"static/fonts/fonts.css").read()+CSS).encode()).hexdigest()[:10]
 
+REG = {"CAD": "ca", "USD": "us"}  # store region from listing currency
+REG_EMPTY = {"ca": "No Canadian stores carry this right now.", "us": "No US stores carry this right now."}
+def rsw(all_html, ca_html, us_html):
+    """Region-switchable block. 'All' is the real, crawlable content; Canada/US versions sit in inert <template>s
+    that region.js swaps in client-side."""
+    return (f'<div class="rsw"><div data-v="all">{all_html}</div><template data-v="ca">{ca_html}</template>'
+            f'<template data-v="us">{us_html}</template></div>')
+RTOGGLE = """<div class="rgn" role="radiogroup" aria-label="Show stores in"><button type="button" role="radio" data-set="all" aria-checked="true">All</button><button type="button" role="radio" data-set="ca" aria-checked="false">Canada</button><button type="button" role="radio" data-set="us" aria-checked="false">US</button></div>"""
+RHEAD = """<script>try{var r=localStorage.getItem("twig-region");if(r==="ca"||r==="us")document.documentElement.setAttribute("data-region",r)}catch(e){}</script><script defer src="/region.js?v=1"></script>"""
+REGION_JS = r"""(function(){
+var K="twig-region",H=document.documentElement;
+function cur(){return H.getAttribute("data-region")||"all"}
+function apply(r){
+ if(r==="all")H.removeAttribute("data-region");else H.setAttribute("data-region",r);
+ try{r==="all"?localStorage.removeItem(K):localStorage.setItem(K,r)}catch(e){}
+ document.querySelectorAll(".rgn button").forEach(function(b){b.setAttribute("aria-checked",b.getAttribute("data-set")===r?"true":"false")});
+ document.querySelectorAll(".rsw").forEach(function(w){
+  var a=w.querySelector(':scope>[data-v="all"]'),live=w.querySelector(":scope>.rlive");
+  if(live)live.remove();
+  if(r==="all"){a.hidden=false;return}
+  var t=w.querySelector(':scope>template[data-v="'+r+'"]');if(!t)return;
+  var d=document.createElement("div");d.className="rlive";d.appendChild(t.content.cloneNode(true));a.hidden=true;w.appendChild(d);
+ });
+}
+document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest(".rgn button");if(b)apply(b.getAttribute("data-set"))});
+apply(cur());
+})();
+"""
 LOGO = """<span class="logo-lock"><img class="wm" src="/wordmark.svg" alt="Twig Deals" width="74" height="46"></span>"""
 
 def ld(obj):
@@ -73,9 +101,9 @@ def ld(obj):
 def page(title, body, desc="", head=""):
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(title)}</title><meta name="description" content="{e(desc or TAGLINE)}"><meta name="theme-color" content="#0E0F11"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta property="og:type" content="website"><meta property="og:site_name" content="Twig Deals"><meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc or TAGLINE)}"><meta property="og:image" content="https://twigdeals.com/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://twigdeals.com/og.png">
-<link rel="preload" href="/fonts/BarlowCondensed-800.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/style.css?v={CSS_V}"><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{{"token": "84d077f07747412a876284c5975f5122"}}'></script>{head}</head><body>
-<header class="top"><div class="w bar"><a class="logo" href="/">{LOGO}</a><nav><a href="/sticks/">Sticks</a><a href="/curves/">Curve + flex</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">Sale calendar</a><a href="/about/">About</a><a class="nav-cta" href="#newsletter">Weekly drops</a></nav></div></header>
-<main>{body}{NEWSLETTER}</main><footer><div class="w foot"><div>{LOGO}<p>Hockey stick price tracker. Prices are pulled from retailer sites twice a day and can change; confirm on the store page before you buy. Some links earn us a commission at no cost to you. CAD and USD are shown as listed, not converted.</p><p>Stores tracked: {e(", ".join(n for _, n, _, _ in STORES))}.</p></div><div class="flinks"><a href="/sticks/">All sticks</a><a href="/curves/">Curve + flex</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">When sticks go on sale</a><a href="/about/">About + stores</a></div></div></footer></body></html>"""
+<link rel="preload" href="/fonts/BarlowCondensed-800.woff2" as="font" type="font/woff2" crossorigin>{RHEAD}<link rel="stylesheet" href="/style.css?v={CSS_V}"><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{{"token": "84d077f07747412a876284c5975f5122"}}'></script>{head}</head><body>
+<header class="top"><div class="w bar"><a class="logo" href="/">{LOGO}</a>{RTOGGLE}<nav><a href="/sticks/">Sticks</a><a href="/curves/">Curve + flex</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">Sale calendar</a><a href="/about/">About</a><a class="nav-cta" href="#newsletter">Weekly drops</a></nav></div></header>
+<main><p class="w rnote">Canadian stores list prices in CAD and ship to the US; on their sites US visitors may see different prices or stock.</p>{body}{NEWSLETTER}</main><footer><div class="w foot"><div>{LOGO}<p>Hockey stick price tracker. Prices are pulled from retailer sites twice a day and can change; confirm on the store page before you buy. Some links earn us a commission at no cost to you. CAD and USD are shown as listed, not converted.</p><p>Stores tracked: {e(", ".join(n for _, n, _, _ in STORES))}.</p></div><div class="flinks"><a href="/sticks/">All sticks</a><a href="/curves/">Curve + flex</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">When sticks go on sale</a><a href="/about/">About + stores</a></div></div></footer></body></html>"""
 
 NEWSLETTER = f"""<section class="nl" id="newsletter"><div class="w nl-in"><div><p class="kicker">Every Thursday</p><h2>The drop sheet.</h2><p>One email. The biggest real price cuts on senior and intermediate twigs, sorted by curve and flex. No fluff.</p></div>
 <!-- NEWSLETTER: Beehiiv free plan, no API. The subscribe page doesn't prefill ?email= (checked Oct 19, 2026), so this is a plain link. -->
@@ -152,7 +180,7 @@ def main():
         spec = " · ".join(filter(None,[v["size"] and v["size"][:3].upper()+".",v["curve"],(v["flex"] and v["flex"]+" flex"),v["hand"] and v["hand"][0]+"H"]))
         was = f'<s>{v["compare_at"]:,.2f}</s>' if v["compare_at"] and v["compare_at"]>v["price"] else ""
         badge = f'<span class="drop">−{v["drop_pct"]}%</span>' if v["drop_pct"] else '<span class="drop zero">—</span>'
-        return f"""<li class="deal">{badge}<div class="d-name"><span class="brand">{e(v["brand"])}</span><a href="/sticks/{v["model_slug"]}/">{e(v["model"])}</a><span class="spec">{e(spec)}</span></div>
+        return f"""<li class="deal" data-r="{REG[v['currency']]}">{badge}<div class="d-name"><span class="brand">{e(v["brand"])}</span><a href="/sticks/{v["model_slug"]}/">{e(v["model"])}</a><span class="spec">{e(spec)}</span></div>
 <div class="d-store">{e(STORE_NAMES[v["store"]])}</div><div class="d-spark">{spark([x["price"] for x in hist[v["id"]]])}</div>
 <div class="d-price"><b>{v["price"]:,.2f}</b><small>{v["currency"]}</small>{was}</div><a class="go" rel="sponsored nofollow" href="{e(aff(v["store"],v["url"]))}" aria-label="View at {e(STORE_NAMES[v["store"]])}">View →</a></li>"""
 
@@ -169,17 +197,24 @@ def main():
     for v in live:
         # Deals only from rows confirmed in stock by the latest run; rows carried over from an earlier run are excluded.
         if v["available"] and v["last_seen"] == last_ts and v["drop_pct"] >= 10 and not v["pro_stock"]: cands[v["model_slug"]].append(v)
-    best = {k: max([v for v in vl if v["size"] == "Senior"] or vl, key=lambda v: v["drop_pct"]) for k, vl in cands.items()}
-    top = sorted(best.values(), key=lambda v: -v["drop_pct"])[:24]
+    def top_for(rg=None):
+        b = {}
+        for k, vl in cands.items():
+            vl = [v for v in vl if rg is None or REG[v["currency"]] == rg]
+            if vl: b[k] = max([v for v in vl if v["size"] == "Senior"] or vl, key=lambda v: v["drop_pct"])
+        return sorted(b.values(), key=lambda v: -v["drop_pct"])[:24]
+    top = top_for()
+    def deals_ol(vs, empty): return f'<ol class="deals">{"".join(card(v) for v in vs) or f"<li class=empty>{empty}</li>"}</ol>'
     n_instock = sum(1 for v in live if v["available"])
+    n_reg = {rg: sum(1 for v in live if v["available"] and REG[v["currency"]] == rg) for rg in ("ca", "us")}
     upd = datetime.strptime(last_ts, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc).astimezone(ET)
     elite_low = sorted([v for v in live if v["available"] and not v["pro_stock"] and v["size"]=="Senior"], key=lambda v: v["price"])
     body = f"""<section class="hero"><div class="w"><p class="kicker">Updated {upd:%b %-d, %Y} · {upd:%-I:%M %p} ET</p>
 <h1>Stop paying<br>full price for<br>a <em>twig.</em></h1>
 <p class="lede">We check every stick at {len(STORE_NAMES)} stores twice a day, curve by curve and flex by flex, and show you what actually dropped.</p>
-<dl class="figs"><div><dt>Models tracked</dt><dd>{len(models)}</dd></div><div><dt>Variants</dt><dd>{len(live):,}</dd></div><div><dt>In stock now</dt><dd>{n_instock:,}</dd></div><div><dt>Stores</dt><dd>{len(STORES)}</dd></div></dl></div></section>
+<dl class="figs"><div><dt>Models tracked</dt><dd>{len(models)}</dd></div><div><dt>Variants</dt><dd>{len(live):,}</dd></div><div><dt>In stock now</dt><dd><span class="ro-all">{n_instock:,}</span><span class="ro-ca">{n_reg["ca"]:,}</span><span class="ro-us">{n_reg["us"]:,}</span></dd></div><div><dt>Stores</dt><dd>{len(STORES)}</dd></div></dl></div></section>
 <section class="w block"><div class="sec-head"><h2>This week's biggest drops</h2><p>Best in-stock cut per model, new sticks only. % is vs. the 7-day high or the store's own list price.</p></div>
-<ol class="deals">{"".join(card(v) for v in top) or "<li>No drops of 10%+ right now.</li>"}</ol></section>
+{rsw(deals_ol(top, "No drops of 10%+ right now."), deals_ol(top_for("ca"), "No Canadian stores have a 10%+ drop right now."), deals_ol(top_for("us"), "No US stores have a 10%+ drop right now."))}</section>
 <section class="w block split"><div><div class="sec-head"><h2>Shop your spec</h2><p>Pick the curve and flex you already play.</p></div><div class="chips">{"".join(f'<a href="{p}">{e(t)}</a>' for p,t in POPULAR[:18])}</div></div>
 <div><div class="sec-head"><h2>Every model</h2></div><ul class="index">{"".join(f'<li><a href="/sticks/{s}/"><span>{e(b)}</span> {e(m)}</a></li>' for s,b,m in sorted(models, key=lambda k:(k[1],k[2])))}</ul></div></section>"""
     home_ld = ld({"@context": "https://schema.org", "@graph": [
@@ -188,6 +223,7 @@ def main():
     write("/", page(f"{SITE}: hockey stick price tracker", body, "Track hockey stick prices and the best drops this week across Bauer, CCM, Warrior, True and Sherwood.", home_ld))
     # Machine-readable current top deals (same list as the homepage)
     # Real 404 page (Cloudflare Pages serves dist/404.html with status 404 for unknown paths). noindex, no canonical.
+    (OUT / "region.js").write_text(REGION_JS)
     (OUT / "404.html").write_text(page(f"Page not found | {SITE}", '<div class="w page"><p class="kicker">404</p><h1>Page not found</h1><p class="lede">That page doesn&rsquo;t exist or has moved. Try <a href="/">this week&rsquo;s biggest drops</a>, <a href="/sticks/">every stick we track</a> or <a href="/curves/">curve + flex</a>.</p></div>', "Page not found.", '<meta name="robots" content="noindex">'))
     (OUT / "deals.json").write_text(json.dumps({"site": SITE, "url": "https://twigdeals.com/", "updated": last_ts,
         "note": "Best in-stock price cut per model, new sticks only, 10%+ off. Prices in the store's listed currency. reference_price is the 7-day high or the store's list price (see drop_basis). Confirm on the store page before buying.",
@@ -198,8 +234,10 @@ def main():
                    "store_url": v["url"]} for v in top]}, indent=1))
 
     # Stick index + pages
-    idx_rows = "".join(f'''<tr><td class="brand-c">{e(b)}</td><td><a href="/sticks/{s}/">{e(m)}</a></td><td class="num">{len(vl)}</td><td class="num">{sum(1 for v in vl if v["available"])}</td>
-<td class="num">{" / ".join(f"{p:,.2f} {c}" for c,p in sorted({c: min((v["price"] for v in vl if v["available"] and v["currency"]==c and not v["pro_stock"]), default=None) for c in ("USD","CAD")}.items()) if p) or "—"}</td></tr>'''
+    def froms(vl, c): return min((v["price"] for v in vl if v["available"] and v["currency"]==c and not v["pro_stock"]), default=None)
+    def regs(vl): return " ".join(sorted({REG[v["currency"]] for v in vl}))
+    idx_rows = "".join(f'''<tr data-has="{regs(vl)}"><td class="brand-c">{e(b)}</td><td><a href="/sticks/{s}/">{e(m)}</a></td><td class="num">{len(vl)}</td><td class="num"><span class="ro-all">{sum(1 for v in vl if v["available"])}</span><span class="ro-ca">{sum(1 for v in vl if v["available"] and v["currency"]=="CAD")}</span><span class="ro-us">{sum(1 for v in vl if v["available"] and v["currency"]=="USD")}</span></td>
+<td class="num">{" / ".join(f'<span data-r="{REG[c]}">{p:,.2f} {c}</span>' for c,p in sorted({c: froms(vl, c) for c in ("USD","CAD")}.items()) if p) or "—"}</td></tr>'''
         for (s, b, m), vl in sorted(models.items(), key=lambda kv: (kv[0][1], kv[0][2])))
     write("/sticks/", page(f"All tracked hockey sticks | {SITE}", f'''<div class="w page"><p class="kicker">The index</p><h1>Every stick we track</h1><p class="lede">{len(models)} current models from Bauer, CCM, Warrior, True and Sherwood.</p>
 <div class="tw"><table><thead><tr><th>Brand</th><th>Model</th><th class="num">Variants</th><th class="num">In stock</th><th class="num">From (new)</th></tr></thead><tbody>{idx_rows}</tbody></table></div></div>'''))
@@ -216,35 +254,40 @@ def main():
                 c = v["currency"]; low[c] = min(low.get(c, 1e9), v["lowest"])
         SO={"Senior":0,"Intermediate":1,"Junior":2,"Youth":3}
         rows = sorted(vl, key=lambda v: ({1: 0, None: 1, 0: 2}[v["available"]], v["pro_stock"], SO.get(v["size"],4), v["price"]))
-        tr = "".join(f'''<tr class="{'oos' if v['available'] == 0 else ''}"><td>{e(STORE_NAMES[v["store"]])}{' <span class="tag">Pro stock / used</span>' if v["pro_stock"] else ''}</td><td>{e(v["size"] or "")}</td><td class="mono">{e(v["curve"] or "")}</td><td class="num">{e(v["flex"] or "")}</td><td>{e(v["hand"] or "")}</td>
+        tr = "".join(f'''<tr data-r="{REG[v['currency']]}" class="{'oos' if v['available'] == 0 else ''}"><td>{e(STORE_NAMES[v["store"]])}{' <span class="tag">Pro stock / used</span>' if v["pro_stock"] else ''}</td><td>{e(v["size"] or "")}</td><td class="mono">{e(v["curve"] or "")}</td><td class="num">{e(v["flex"] or "")}</td><td>{e(v["hand"] or "")}</td>
 <td class="num"><b>{v["price"]:,.2f}</b> <small>{v["currency"]}</small>{f' <s>{v["compare_at"]:,.2f}</s>' if v["compare_at"] and v["compare_at"]>v["price"] else ""}</td><td class="num">{v["lowest"]:,.2f}</td><td>{'<span class="ok">In stock</span>' if v["available"] else ('<span class="unk">Check store</span>' if v["available"] is None else "Out")}</td>
 <td><a class="go" rel="sponsored nofollow" href="{e(aff(v["store"],v["url"]))}">View →</a></td></tr>''' for v in rows)
+        for rg in ("ca", "us"):
+            if not any(REG[v["currency"]] == rg for v in vl): tr += f'<tr class="rempty" data-only="{rg}"><td colspan="9">{REG_EMPTY[rg]}</td></tr>'
         stores = sorted({STORE_NAMES[v["store"]] for v in vl})
-        new = [v for v in vl if not v["pro_stock"]]
-        inst = [v for v in new if v["available"]]
-        buyable = [v for v in new if v["available"] is not False and v["available"] != 0]
-        sen = [v for v in buyable if v["size"] == "Senior"] or buyable
-        szl = "senior" if any(v["size"] == "Senior" for v in buyable) else "any size"
-        def best(vs, key):
-            vs = [v for v in vs if usd(v[key], v["currency"]) is not None]
-            return min(vs, key=lambda v: usd(v[key], v["currency"])) if vs else None
-        bn = best(sen, "price"); be = best([v for v in new if v["size"] == "Senior"] or new, "lowest")
-        def fig(label, v, key):
-            if not v: return f"<div><dt>{label}</dt><dd>—</dd></div>"
-            u = usd(v[key], v["currency"]); orig = f"{v[key]:,.2f} CAD at {e(STORE_NAMES[v['store']])}" if v["currency"] == "CAD" else f"at {e(STORE_NAMES[v['store']])}"
-            return f"<div><dt>{label}</dt><dd>${u:,.2f}<small> USD</small></dd><p class='fig-sub'>{orig}</p></div>"
-        maxdrop = max((v["drop_pct"] for v in buyable), default=0)
-        figs = fig(f"Lowest now · {szl}", bn, "price") + fig("Lowest ever · " + ("senior" if any(v["size"]=="Senior" for v in new) else "any size"), be, "lowest")
-        figs += f"<div><dt>Biggest cut</dt><dd class='red'>{('−'+str(maxdrop)+'%') if maxdrop else '—'}</dd></div><div><dt>Confirmed in stock</dt><dd>{len(inst)}<small>/{len(vl)}</small></dd></div>"
+        def figs_for(vl):
+          new = [v for v in vl if not v["pro_stock"]]
+          inst = [v for v in new if v["available"]]
+          buyable = [v for v in new if v["available"] is not False and v["available"] != 0]
+          sen = [v for v in buyable if v["size"] == "Senior"] or buyable
+          szl = "senior" if any(v["size"] == "Senior" for v in buyable) else "any size"
+          def best(vs, key):
+              vs = [v for v in vs if usd(v[key], v["currency"]) is not None]
+              return min(vs, key=lambda v: usd(v[key], v["currency"])) if vs else None
+          bn = best(sen, "price"); be = best([v for v in new if v["size"] == "Senior"] or new, "lowest")
+          def fig(label, v, key):
+              if not v: return f"<div><dt>{label}</dt><dd>—</dd></div>"
+              u = usd(v[key], v["currency"]); orig = f"{v[key]:,.2f} CAD at {e(STORE_NAMES[v['store']])}" if v["currency"] == "CAD" else f"at {e(STORE_NAMES[v['store']])}"
+              return f"<div><dt>{label}</dt><dd>${u:,.2f}<small> USD</small></dd><p class='fig-sub'>{orig}</p></div>"
+          maxdrop = max((v["drop_pct"] for v in buyable), default=0)
+          figs = fig(f"Lowest now · {szl}", bn, "price") + fig("Lowest ever · " + ("senior" if any(v["size"]=="Senior" for v in new) else "any size"), be, "lowest")
+          figs += f"<div><dt>Biggest cut</dt><dd class='red'>{('−'+str(maxdrop)+'%') if maxdrop else '—'}</dd></div><div><dt>Confirmed in stock</dt><dd>{len(inst)}<small>/{len(vl)}</small></dd></div>"
+          return f'<dl class="figs">{figs}</dl>' if vl else f'<p class="empty">{"No stores carry this right now."}</p>'
         fxnote = f"CAD prices converted at the Bank of Canada rate of {FX['usdcad']:.4f} ({FX['date']})." if FX["usdcad"] else ""
         ph = PHOTOS.get(s)
         photo = (f'<figure class="photo"><img src="{ph["file"]}" alt="{e(b)} {e(m)} hockey stick" width="{ph["w"]}" height="{ph["h"]}" loading="lazy" decoding="async">'
                  f'<figcaption>Product photo: {e(STORE_NAMES[ph["store"]])}</figcaption></figure>') if ph else ""
         body = f'''<div class="w page"><p class="crumb"><a href="/sticks/">Sticks</a> / {e(b)}</p><div class="{'phead has-photo' if ph else 'phead'}"><div><p class="kicker">{e(b)}</p><h1>{e(m)}</h1>
 <p class="lede">Tracking {len(vl)} variants at {", ".join(stores)}. New sticks and pro stock are kept separate, and lowest-ever counts new sticks only. {fxnote}</p></div>{photo}</div>
-<dl class="figs">{figs}</dl><h2 class="h2">Price history</h2>{chart(series)}<h2 class="h2">Every variant: senior first, cheapest in stock first</h2>
+{rsw(figs_for(vl), figs_for([v for v in vl if v["currency"]=="CAD"]).replace("No stores", "No Canadian stores"), figs_for([v for v in vl if v["currency"]=="USD"]).replace("No stores", "No US stores"))}<h2 class="h2">Price history</h2>{chart(series)}<h2 class="h2">Every variant: senior first, cheapest in stock first</h2>
 <div class="tw"><table><thead><tr><th>Store</th><th>Size</th><th>Curve</th><th class="num">Flex</th><th>Hand</th><th class="num">Price</th><th class="num">Low</th><th>Stock</th><th></th></tr></thead><tbody>{tr}</tbody></table></div></div>'''
         desc = f"Current and lowest-ever prices for the {b} {m} hockey stick by curve, flex and hand."
+        new = [v for v in vl if not v["pro_stock"]]
         # One Offer per store: its cheapest new (non-pro-stock) variant. Currency as the store lists it.
         per = {}
         for v in new:
@@ -269,7 +312,7 @@ def main():
         path = f"/curves/{cslug(c)}-{f}-flex-{slug(sz)}/"; links.append((path, f"{c} {f} flex {sz}"))
         inst = sorted([v for v in vl if v["available"]], key=lambda v: v["price"])
         body = f'''<div class="w page"><p class="crumb"><a href="/curves/">Curve + flex</a></p><h1>{e(c)} {e(f)} flex {e(sz.lower())} hockey sticks: best prices</h1>
-<p class="sub">{len(inst)} in-stock options across {len({v["model_slug"] for v in inst})} models, cheapest first. Prices in original currency.</p><ol class="deals">{"".join(card(v) for v in inst[:30]) or "<li>Nothing in stock right now.</li>"}</ol></div>'''
+<p class="sub">{len(inst)} in-stock options across {len({v["model_slug"] for v in inst})} models, cheapest first. Prices in original currency.</p>{rsw(deals_ol(inst[:30], "Nothing in stock right now."), deals_ol([v for v in inst if v["currency"]=="CAD"][:30], REG_EMPTY["ca"]), deals_ol([v for v in inst if v["currency"]=="USD"][:30], REG_EMPTY["us"]))}</div>'''
         write(path, page(f"{c} {f} flex {sz} hockey stick deals | {SITE}", body))
     write("/curves/", page(f"Hockey stick deals by curve and flex | {SITE}", "<div class='w page'><p class='kicker'>Shop your spec</p><h1>Curve + flex</h1><p class='lede'>Every curve, flex and size combo with at least four live listings.</p><div class='chips'>" + "".join(f'<a href="{p}">{e(t)}</a>' for p, t in links) + "</div></div>"))
 
