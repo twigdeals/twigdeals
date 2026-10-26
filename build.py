@@ -187,6 +187,8 @@ def main():
         {"@type": "Organization", "@id": "https://twigdeals.com/#org", "name": SITE, "url": "https://twigdeals.com/", "logo": "https://twigdeals.com/icon-512.png", "sameAs": [BEEHIIV_BASE_URL]}]})
     write("/", page(f"{SITE}: hockey stick price tracker", body, "Track hockey stick prices and the best drops this week across Bauer, CCM, Warrior, True and Sherwood.", home_ld))
     # Machine-readable current top deals (same list as the homepage)
+    # Real 404 page (Cloudflare Pages serves dist/404.html with status 404 for unknown paths). noindex, no canonical.
+    (OUT / "404.html").write_text(page(f"Page not found | {SITE}", '<div class="w page"><p class="kicker">404</p><h1>Page not found</h1><p class="lede">That page doesn&rsquo;t exist or has moved. Try <a href="/">this week&rsquo;s biggest drops</a>, <a href="/sticks/">every stick we track</a> or <a href="/curves/">curve + flex</a>.</p></div>', "Page not found.", '<meta name="robots" content="noindex">'))
     (OUT / "deals.json").write_text(json.dumps({"site": SITE, "url": "https://twigdeals.com/", "updated": last_ts,
         "note": "Best in-stock price cut per model, new sticks only, 10%+ off. Prices in the store's listed currency. reference_price is the 7-day high or the store's list price (see drop_basis). Confirm on the store page before buying.",
         "deals": [{"brand": v["brand"], "model": v["model"], "stick_page": f"https://twigdeals.com/sticks/{v['model_slug']}/", "store": STORE_NAMES[v["store"]],
