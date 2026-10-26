@@ -10,7 +10,7 @@ import images, sys
 sys.path.insert(0, str(Path(__file__).resolve().parent / "collector"))
 from collect import size_from_flex
 ET = ZoneInfo("America/New_York")
-STOCK_UNKNOWN = {"sourceforsports"}  # feed reports every variant available; not trustworthy
+STOCK_UNKNOWN = {"sourceforsports", "sportsexcellence"}  # stock flags not trustworthy (SFS: all variants available; SE: Shopify Markets, US visitors often see sold out)
 
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "dist"
