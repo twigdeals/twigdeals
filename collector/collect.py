@@ -300,6 +300,11 @@ def main():
     for s in STORES + stores_html.STORES:
         try: collect_store(db, s, models, ts); db.commit()
         except Exception as e: db.rollback(); print(f"{s['name']}: FAILED {e}")
+    # Pro stock (Pro Stock Hockey Player Sticks): own tables, not a retail store. Incremental, capped per run.
+    if "--no-prostock" not in sys.argv:
+        import prostock
+        try: prostock.main(db, ts)
+        except Exception as e: db.rollback(); print(f"Pro Stock Hockey: FAILED {e}")
     db.close()
 
 if __name__ == "__main__":

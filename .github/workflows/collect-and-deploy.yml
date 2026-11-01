@@ -22,6 +22,8 @@ jobs:
         run: git pull --ff-only origin main
       - name: Collect prices
         run: python collector/collect.py
+        env:
+          PROSTOCK_MAX_DETAIL: "200"   # pro stock product pages per run (4 s apart, ~14 min max; ~2-5 min once backfilled)
       - name: Commit price history
         run: |
           git config user.name "twigdeals-bot"

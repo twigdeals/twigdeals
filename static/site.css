@@ -80,3 +80,16 @@ html[data-region="ca"] [data-r="us"],html[data-region="us"] [data-r="ca"]{displa
 html[data-region="ca"] tr[data-has]:not([data-has~="ca"]),html[data-region="us"] tr[data-has]:not([data-has~="us"]){display:none}
 .rempty td,.deals .empty,p.empty{color:#64748b;font-style:italic;padding:var(--s4) 8px}
 @media (max-width:860px){.bar{flex-wrap:wrap;height:auto;padding-top:8px;padding-bottom:8px;row-gap:8px}.rgn{order:3;margin:0 auto 0 0}.rgn button{padding:7px 14px}}
+/* Pro stock */
+html[data-region="ca"] p[data-only="ca"]{display:block}
+.psbadge{font:700 11px/1.1 var(--display);letter-spacing:.1em;text-transform:uppercase;background:var(--ink);color:#fff;padding:5px 6px;text-align:center;align-self:start}
+.pslist .pscard{display:grid;grid-template-columns:76px minmax(0,1fr) 150px 80px;align-items:center;gap:var(--s3);padding:var(--s3) var(--s3) var(--s3) 0;border-bottom:1px solid var(--line)}
+.pscard .d-name>*{display:block}.pscard .dr,.pscard .who{font-size:13px;color:var(--mute)}
+.pscard .d-price small{margin-left:4px}.pscard .d-price span{display:block;font-size:13px}
+.psf{display:flex;flex-wrap:wrap;gap:var(--s3);align-items:end;margin:var(--s5) 0 var(--s3)}
+.psf label{display:flex;flex-direction:column;font:600 12px/1.2 var(--display);letter-spacing:.1em;text-transform:uppercase;gap:4px}
+.psf select,.psf button{font:15px var(--body,inherit);padding:8px;border:1px solid var(--ink);background:var(--paper);min-width:110px}
+.psf .meta{flex-basis:100%;margin:0}
+.pslink{margin:var(--s3) 0 0;font-size:14px}.pslink a{font-weight:600}.pslink span{color:var(--mute)}
+@media (max-width:720px){.pslist .pscard{grid-template-columns:64px minmax(0,1fr) auto;grid-template-areas:"b n n" "b p g"}.psbadge{grid-area:b}.pscard .d-name{grid-area:n}.pscard .d-price{grid-area:p}.pscard .go{grid-area:g}.psf select{min-width:0}.psf label{flex:1 1 40%}}
+.pscard .wear{font-size:12px;color:#9A6B00}
