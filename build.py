@@ -103,7 +103,7 @@ def page(title, body, desc="", head=""):
 <title>{e(title)}</title><meta name="description" content="{e(desc or TAGLINE)}"><meta name="theme-color" content="#0E0F11"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta property="og:type" content="website"><meta property="og:site_name" content="Twig Deals"><meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc or TAGLINE)}"><meta property="og:image" content="https://twigdeals.com/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://twigdeals.com/og.png">
 <link rel="preload" href="/fonts/BarlowCondensed-800.woff2" as="font" type="font/woff2" crossorigin>{RHEAD}<link rel="stylesheet" href="/style.css?v={CSS_V}"><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{{"token": "84d077f07747412a876284c5975f5122"}}'></script>{head}</head><body>
 <header class="top"><div class="w bar"><a class="logo" href="/">{LOGO}</a>{RTOGGLE}<nav><a href="/sticks/">Sticks</a><a href="/curves/">Curve + flex</a><a href="/pro-stock/">Pro stock</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">Sale calendar</a><a href="/about/">About</a><a class="nav-cta" href="#newsletter">Weekly drops</a></nav></div></header>
-<main><p class="w rnote">Canadian stores list prices in CAD and ship to the US; on their sites US visitors may see different prices or stock.</p>{body}{NEWSLETTER}</main><footer><div class="w foot"><div>{LOGO}<p>Hockey stick price tracker. Prices are pulled from retailer sites twice a day and can change; confirm on the store page before you buy. Some links earn us a commission at no cost to you. CAD and USD are shown as listed, not converted.</p><p>Stores tracked: {e(", ".join(n for _, n, _, _ in STORES))}. Pro stock section: Pro Stock Hockey (listed separately).</p></div><div class="flinks"><a href="/sticks/">All sticks</a><a href="/curves/">Curve + flex</a><a href="/pro-stock/">Pro stock</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">When sticks go on sale</a><a href="/about/">About + stores</a></div></div></footer></body></html>"""
+<main><p class="w rnote">Canadian stores list prices in CAD and ship to the US; on their sites US visitors may see different prices or stock.</p>{body}{NEWSLETTER}</main><footer><div class="w foot"><div>{LOGO}<p>Hockey stick price tracker. Prices are pulled from retailer sites twice a day and can change; confirm on the store page before you buy. Some links earn us a commission at no cost to you. CAD and USD are shown as listed, not converted.</p><p>Stores tracked: {e(", ".join(n for _, n, _, _ in STORES))}. Pro stock page (listed separately): Pro Stock Hockey, Pro Stock North America, North Prostock, plus pro stock from HockeyStickMan, Ice Warehouse, TheHockeyShop.com, Just Hockey and Hockey Monkey.</p></div><div class="flinks"><a href="/sticks/">All sticks</a><a href="/curves/">Curve + flex</a><a href="/pro-stock/">Pro stock</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">When sticks go on sale</a><a href="/about/">About + stores</a></div></div></footer></body></html>"""
 
 NEWSLETTER = f"""<section class="nl" id="newsletter"><div class="w nl-in"><div><p class="kicker">Every Thursday</p><h2>The drop sheet.</h2><p>One email. The biggest real price cuts on senior and intermediate twigs, sorted by curve and flex. No fluff.</p></div>
 <!-- NEWSLETTER: Beehiiv free plan, no API. The subscribe page doesn't prefill ?email= (checked Oct 19, 2026), so this is a plain link. -->
@@ -145,65 +145,111 @@ def chart(series):
 <text x="{W-P}" y="{H-12}" font-size="11" fill="#64748b" text-anchor="end">{dates[-1]}</text>{"".join(out)}</svg>
 <p class="meta">{len(dates)} day(s) of history so far. The chart fills in as the collector runs twice daily.</p>'''
 
-# ---------- Pro stock (Pro Stock Hockey, Player Sticks only). Separate table, never mixed into retail deals/history/store count.
-def load_prostock(db):
+# ---------- Pro stock. Separate from retail: never in deals, history, lowest-ever, curve pages or the retail store count.
+# Sources: dedicated sellers (prostock table) + pro stock rows the retail collectors already find (variants.pro_stock=1).
+PS_SELLERS = {"prostockhockey": ("Pro Stock Hockey", "USD", "https://www.prostockhockey.com/player-sticks/"),
+              "psna": ("Pro Stock North America", "CAD", "https://prostocknorthamerica.com/collections/prostock-sticks"),
+              "northprostock": ("North Prostock", "CAD", "https://northprostock.com")}
+PS_FROM_RETAIL = ("hockeystickman", "icewarehouse", "thehockeyshop", "justhockey", "hockeymonkey")
+PS_SKIP = re.compile(r"refurb|blackout|\bused\b", re.I)   # HSM refurbished / house-brand sticks are not pro stock
+COND_ORDER = ["New", "Team Issue", "Pro Return", "Like New", "Used"]
+
+def ps_player(store, title):
+    pats = {"hockeystickman": r"^(.+?) Pro Stock\s*-", "icewarehouse": r"Pro Stock (.+?)(?: Hockey)? Stick$",
+            "thehockeyshop": r"Pro Stock .*? - (.+)$"}  # Just Hockey titles put the name in varying places; left blank
+    m = re.search(pats.get(store, r"$^"), title or "")
+    return m.group(1).strip().title() if m else None
+
+def load_prostock(db, live):
+    rows = []
     try:
-        rows = [dict(r) for r in db.execute("SELECT * FROM prostock WHERE listed=1 AND detail_ts IS NOT NULL AND coalesce(instock,1)=1 ORDER BY price")]
-    except sqlite3.OperationalError: return []
+        for r in db.execute("SELECT * FROM prostock WHERE listed=1 AND detail_ts IS NOT NULL AND coalesce(instock,1)=1"):
+            r = dict(r); st = r.get("store") or "prostockhockey"
+            r.update(store=st, store_name=PS_SELLERS[st][0], currency=r["currency"] or PS_SELLERS[st][1],
+                     condition=r.get("condition") or ("Used" if r["wear_note"] else "New"), link=r["url"], sponsored=False)
+            rows.append(r)
+    except sqlite3.OperationalError: pass
+    for v in live:
+        if not v["pro_stock"] or v["store"] not in PS_FROM_RETAIL or v["available"] == 0: continue
+        if PS_SKIP.search(v["product_title"] or ""): continue
+        rows.append(dict(store=v["store"], store_name=STORE_NAMES[v["store"]], currency=v["currency"], title=v["product_title"],
+            brand=v["brand"], model=v["model"], model_slug=v["model_slug"], dressed_as=None, player=ps_player(v["store"], v["product_title"]),
+            team=None, hand=v["hand"], flex=v["flex"], curve=v["curve"], retail_curve=None, lie=None, length=None, age_group=v["size"],
+            price=v["price"], stock=None, condition="Pro Return" if re.search(r"pro return", v["product_title"] or "", re.I) else "New",
+            wear_note=0, link=aff(v["store"], v["url"]), sponsored=bool(AFF.get(v["store"]))))
     for r in rows:
-        r["size"] = r["age_group"] or size_from_flex(r["flex"])
-        r["rcurve"] = (r["retail_curve"] or "").split("/")[0].strip() or None
+        if r["hand"]: r["hand"] = {"L": "Left", "R": "Right"}.get(r["hand"][:1].upper(), r["hand"])
+        r["flex"] = (re.match(r"\d{2,3}", str(r["flex"] or "")) or [None])[0]
+        r["size"] = r.get("age_group") or size_from_flex(r["flex"])
+        base = r.get("retail_curve") or r.get("curve") or ""
+        r["rcurve"] = (re.sub(r"(?i)^custom\s*|\s*\(.*", "", base.split("/")[0]).strip().upper() or None)
+        r["r"] = REG[r["currency"]]; r["usd"] = usd(r["price"], r["currency"]) or r["price"]
+    rows.sort(key=lambda r: r["usd"])
     return rows
 
 def ps_link(s, by_model):
-    n = len(by_model.get(s, []))
-    return (f'<p class="pslink" data-r="us"><a href="/pro-stock/?model={s}">Pro stock options ({n}) →</a> '
-            '<span>Player-spec team sticks at Pro Stock Hockey (US), matched on the real model, not the graphics.</span></p>') if n else ""
+    vl = by_model.get(s, [])
+    if not vl: return ""
+    n = {rg: sum(1 for x in vl if x["r"] == rg) for rg in ("ca", "us")}
+    return (f'<p class="pslink"><a href="/pro-stock/?model={s}">Pro stock options (<span class="ro-all">{len(vl)}</span><span class="ro-ca">{n["ca"]}</span><span class="ro-us">{n["us"]}</span>) →</a> '
+            '<span>Player-spec team sticks from pro stock sellers, matched on the real model. Listed separately from the prices below.</span></p>')
 
 PS_JS = r"""(function(){
-var f=document.getElementById("psf");if(!f)return;var L=[].slice.call(document.querySelectorAll("#psl>li.pscard")),C=document.getElementById("psn");
-var q=new URLSearchParams(location.search);["hand","size","curve","model","flex"].forEach(function(k){if(q.get(k)&&f[k])f[k].value=q.get(k)});
-function go(){var h=f.hand.value,z=f.size.value,c=f.curve.value,m=f.model.value,fx=f.flex.value,n=0;
- L.forEach(function(li){var d=li.dataset,fl=+d.flex||0,ok=(!h||d.hand===h)&&(!z||d.size===z)&&(!c||d.curve===c)&&(!m||d.model===m)&&
-  (!fx||(fx==="lt75"?fl&&fl<75:fx==="75-85"?fl>=75&&fl<=85:fx==="87-95"?fl>=87&&fl<=95:fl>=100));li.hidden=!ok;if(ok)n++});
+var f=document.getElementById("psf");if(!f)return;var H=document.documentElement,L=[].slice.call(document.querySelectorAll("#psl>li.pscard")),C=document.getElementById("psn");
+var K=["hand","size","curve","model","flex","cond","store"],q=new URLSearchParams(location.search);K.forEach(function(k){if(q.get(k)&&f[k])f[k].value=q.get(k)});
+function go(){var v={};K.forEach(function(k){v[k]=f[k].value});var rg=H.getAttribute("data-region")||"all",n=0;
+ L.forEach(function(li){var d=li.dataset,fl=+d.flex||0,ok=(rg==="all"||d.r===rg)&&(!v.hand||d.hand===v.hand)&&(!v.size||d.size===v.size)&&(!v.curve||d.curve===v.curve)&&(!v.model||d.model===v.model)&&(!v.cond||d.cond===v.cond)&&(!v.store||d.store===v.store)&&
+  (!v.flex||(v.flex==="lt75"?fl&&fl<75:v.flex==="75-85"?fl>=75&&fl<=85:v.flex==="87-95"?fl>=87&&fl<=95:fl>=100));li.hidden=!ok;if(ok)n++});
  C.textContent=n;}
-f.addEventListener("change",go);f.addEventListener("reset",function(){setTimeout(go,0)});go();})();"""
+f.addEventListener("change",go);f.addEventListener("reset",function(){setTimeout(go,0)});
+document.addEventListener("click",function(e){if(e.target.closest&&e.target.closest(".rgn button"))setTimeout(go,0)});go();})();"""
+
+def ps_li(x, names):
+    who = " · ".join(filter(None, [x.get("player"), x.get("team")]))
+    spec = " · ".join(filter(None, [x["hand"] and x["hand"][0] + "H", x["flex"] and x["flex"] + " flex",
+               x.get("curve") and ("curve " + x["curve"]), x.get("retail_curve") and ("≈ " + x["retail_curve"]),
+               x.get("lie") and ("lie " + x["lie"]), x.get("length"), x["size"]]))
+    mdl = f'<a href="/sticks/{x["model_slug"]}/">{e(x["model"])}</a>' if x["model_slug"] in names else f'<b>{e(x["model"] or x["title"])}</b>'
+    dr = f'<span class="dr">dressed as {e(x["dressed_as"])}</span>' if x.get("dressed_as") else ""
+    stock = f'<span class="ok">{x["stock"]} in stock</span>' if x.get("stock") else '<span class="ok">In stock</span>'
+    cc = slug(x["condition"])
+    wear = '<span class="wear">Listing notes possible tape/cosmetic wear</span>' if x.get("wear_note") else ""
+    rel = "sponsored nofollow" if x["sponsored"] else "nofollow"
+    return (f'<li class="pscard" data-r="{x["r"]}" data-store="{x["store"]}" data-cond="{e(x["condition"])}" data-hand="{e(x["hand"] or "")}" data-flex="{e(x["flex"] or "")}" '
+            f'data-curve="{e(x["rcurve"] or "")}" data-size="{e(x["size"] or "")}" data-model="{e(x["model_slug"] or "")}">'
+            f'<span class="psbadges"><span class="psbadge">Pro stock</span><span class="cond cond-{cc}">{e(x["condition"])}</span></span>'
+            f'<div class="d-name"><span class="brand">{e(x["brand"] or "")} · {e(x["store_name"])}</span>{mdl}{dr}<span class="who">{e(who)}</span><span class="spec">{e(spec)}</span>{wear}</div>'
+            f'<div class="d-price"><b>{x["price"]:,.2f}</b><small>{x["currency"]}</small>{stock}</div>'
+            f'<a class="go" rel="{rel}" href="{e(x["link"])}" aria-label="View at {e(x["store_name"])}">View →</a></li>')
 
 def prostock_page(PS, models):
     names = {s: f"{b} {m}" for s, b, m in models}
     opts = lambda vals: "".join(f'<option value="{e(v)}">{e(l)}</option>' for v, l in vals)
-    curves = sorted({x["rcurve"] for x in PS if x["rcurve"]})
+    cnt = lambda key: defaultdict(int, {k: sum(1 for x in PS if x[key] == k) for k in {x[key] for x in PS}})
+    curves = sorted(k for k, n in cnt("rcurve").items() if k and n >= 3)
     msl = sorted({x["model_slug"] for x in PS if x["model_slug"] in names}, key=lambda k: names[k])
     sizes = [z for z in ("Senior", "Intermediate", "Junior", "Youth") if any(x["size"] == z for x in PS)]
-    def li(x):
-        who = " · ".join(filter(None, [x["player"], x["team"]]))
-        spec = " · ".join(filter(None, [x["hand"] and x["hand"][0] + "H", x["flex"] and x["flex"] + " flex",
-                   x["curve"] and ("curve " + x["curve"]), x["retail_curve"] and ("≈ " + x["retail_curve"]),
-                   x["lie"] and ("lie " + x["lie"]), x["length"], x["size"]]))
-        mdl = f'<a href="/sticks/{x["model_slug"]}/">{e(x["model"])}</a>' if x["model_slug"] in names else f'<b>{e(x["model"] or x["title"])}</b>'
-        dr = f'<span class="dr">dressed as {e(x["dressed_as"])}</span>' if x["dressed_as"] else ""
-        stock = f'<span class="ok">{x["stock"]} in stock</span>' if x["stock"] else '<span class="unk">Check store</span>'
-        return (f'<li class="pscard" data-r="us" data-hand="{e(x["hand"] or "")}" data-flex="{e(x["flex"] or "")}" data-curve="{e(x["rcurve"] or "")}" '
-                f'data-size="{e(x["size"] or "")}" data-model="{e(x["model_slug"] or "")}"><span class="psbadge">Pro stock</span>'
-                f'<div class="d-name"><span class="brand">{e(x["brand"] or "")}</span>{mdl}{dr}<span class="who">{e(who)}</span><span class="spec">{e(spec)}</span>{'<span class="wear">Listing notes possible tape/cosmetic wear</span>' if x["wear_note"] else ""}</div>'
-                f'<div class="d-price"><b>{x["price"]:,.2f}</b><small>USD</small>{stock}</div>'
-                f'<a class="go" rel="nofollow" href="{e(x["url"])}" aria-label="View at Pro Stock Hockey">View →</a></li>')
+    stores = sorted({(x["store"], x["store_name"], x["currency"]) for x in PS}, key=lambda t: t[1])
+    conds = [c for c in COND_ORDER if any(x["condition"] == c for x in PS)]
     empty = '<li class="empty">No pro stock sticks right now.</li>'
+    by_store = ", ".join(f"{n} ({sum(1 for x in PS if x['store']==s)}, {c})" for s, n, c in stores)
     body = (f'<div class="w page"><p class="kicker">Pro stock · separate from retail</p><h1>Pro stock player sticks</h1>'
-            '<p class="lede">Sticks made to NHL, AHL and NCAA players\' custom specs, listed by Pro Stock Hockey (US store, USD). Each listing is one '
-            'player\'s batch, often "dressed as" another model\'s graphics, so curves are custom (we show the store\'s closest retail curve). '
-            'Some listings, mostly college teams, note the stick may be taped or show cosmetic blemishes. Prices here never count toward retail deals or lowest-ever prices.</p>'
-            '<p class="empty" data-only="ca">Pro Stock Hockey is a US store. Switch to All or US to see its sticks.</p>'
-            f'<form id="psf" class="psf" data-r="us"><label>Hand<select name="hand"><option value="">Any</option>{opts([("Left","Left"),("Right","Right")])}</select></label>'
+            '<p class="lede">Sticks built to NHL, AHL, junior and NCAA players\' custom specs, sold by pro stock sellers in the US and Canada. '
+            'Curves are often custom, so we show the closest retail curve where the store gives one. Condition is shown as each store grades it, from New to Used. '
+            'Prices are in the store\'s currency and never count toward retail deals or lowest-ever prices.</p>'
+            f'<p class="meta">Sellers: {e(by_store)}.</p>'
+            f'<form id="psf" class="psf"><label>Hand<select name="hand"><option value="">Any</option>{opts([("Left","Left"),("Right","Right")])}</select></label>'
             f'<label>Flex<select name="flex"><option value="">Any</option>{opts([("lt75","Under 75"),("75-85","75–85"),("87-95","87–95"),("100+","100+")])}</select></label>'
-            f'<label>Curve (≈ retail)<select name="curve"><option value="">Any</option>{opts((c, c) for c in curves)}</select></label>'
+            f'<label>Curve<select name="curve"><option value="">Any</option>{opts((c, c) for c in curves)}</select></label>'
             f'<label>Size<select name="size"><option value="">Any</option>{opts((z, z) for z in sizes)}</select></label>'
+            f'<label>Condition<select name="cond"><option value="">All</option>{opts((c, c) for c in conds)}</select></label>'
+            f'<label>Store<select name="store"><option value="">All</option>{opts((s, f"{n} ({c})") for s, n, c in stores)}</select></label>'
             f'<label>Model<select name="model"><option value="">Any</option>{opts((k, names[k]) for k in msl)}</select></label>'
-            f'<button type="reset">Clear</button><p class="meta"><b id="psn">{len(PS)}</b> sticks in stock, cheapest first.</p></form>'
-            f'<ol class="deals pslist" id="psl">{"".join(li(x) for x in PS) or empty}</ol></div><script src="/prostock.js?v=1" defer></script>')
+            f'<button type="reset">Clear</button><p class="meta"><b id="psn">{len(PS)}</b> sticks in stock, cheapest first (CAD compared at the Bank of Canada rate).</p></form>'
+            f'<ol class="deals pslist" id="psl">{"".join(ps_li(x, names) for x in PS) or empty}</ol></div><script src="/prostock.js?v=2" defer></script>')
     (OUT / "prostock.js").write_text(PS_JS)
-    write("/pro-stock/", page(f"Pro stock hockey sticks by hand, flex and curve | {SITE}", body,
-          "Pro stock NHL player sticks from Pro Stock Hockey with real model, curve, flex, lie and stock, kept separate from retail prices."))
+    write("/pro-stock/", page(f"Pro stock hockey sticks by hand, flex, curve and condition | {SITE}", body,
+          "Pro stock NHL and team-issue player sticks from US and Canadian pro stock sellers, with curve, flex, hand, condition and stock, kept separate from retail prices."))
 
 def main():
     if OUT.exists(): shutil.rmtree(OUT)
@@ -230,10 +276,12 @@ def main():
         v["drop"] = (ref - v["price"]) if ref and ref > v["price"] else 0
         v["drop_pct"] = round(100 * v["drop"] / ref) if v["drop"] else 0
         v["drop_basis"] = "vs. 7-day high" if v["week_high"] and v["week_high"] > v["price"] else "vs. store's list price"
-    live = [v for v in vs.values() if v["current"]]
+    live_all = [v for v in vs.values() if v["current"]]
+    live = [v for v in live_all if not v["pro_stock"]]  # pro stock lives on /pro-stock/ only
     models = defaultdict(list)
-    for v in live: models[(v["model_slug"], v["brand"], v["model"])].append(v)
-    PS = load_prostock(db)
+    for v in live_all: models[(v["model_slug"], v["brand"], v["model"])].append(v)
+    PS = load_prostock(db, live_all)
+    MODEL_NAMES = {k[0]: f"{k[1]} {k[2]}" for k in models}
     ps_by_model = defaultdict(list)
     for x in PS:
         if x["model_slug"]: ps_by_model[x["model_slug"]].append(x)
@@ -250,7 +298,7 @@ def main():
 
     # Curve + flex landing pages
     combos = defaultdict(list)
-    for v in live:
+    for v in live_all:
         if v["curve_n"] and v["flex"] and v["size"] and re.fullmatch(r"\d{2,3}", v["flex"].strip()):
             combos[(v["curve_n"], v["flex"].strip(), v["size"])].append(v)
     combos = {k: vl for k, vl in combos.items() if len(vl) >= 4}
@@ -317,13 +365,13 @@ def main():
             if not v["pro_stock"]:
                 c = v["currency"]; low[c] = min(low.get(c, 1e9), v["lowest"])
         SO={"Senior":0,"Intermediate":1,"Junior":2,"Youth":3}
-        rows = sorted(vl, key=lambda v: ({1: 0, None: 1, 0: 2}[v["available"]], v["pro_stock"], SO.get(v["size"],4), v["price"]))
+        rows = sorted([v for v in vl if not v["pro_stock"]], key=lambda v: ({1: 0, None: 1, 0: 2}[v["available"]], v["pro_stock"], SO.get(v["size"],4), v["price"]))
         tr = "".join(f'''<tr data-r="{REG[v['currency']]}" class="{'oos' if v['available'] == 0 else ''}"><td>{e(STORE_NAMES[v["store"]])}{' <span class="tag">Pro stock / used</span>' if v["pro_stock"] else ''}</td><td>{e(v["size"] or "")}</td><td class="mono">{e(v["curve"] or "")}</td><td class="num">{e(v["flex"] or "")}</td><td>{e(v["hand"] or "")}</td>
 <td class="num"><b>{v["price"]:,.2f}</b> <small>{v["currency"]}</small>{f' <s>{v["compare_at"]:,.2f}</s>' if v["compare_at"] and v["compare_at"]>v["price"] else ""}</td><td class="num">{v["lowest"]:,.2f}</td><td>{'<span class="ok">In stock</span>' if v["available"] else ('<span class="unk">Check store</span>' if v["available"] is None else "Out")}</td>
 <td><a class="go" rel="sponsored nofollow" href="{e(aff(v["store"],v["url"]))}">View →</a></td></tr>''' for v in rows)
         for rg in ("ca", "us"):
             if not any(REG[v["currency"]] == rg for v in vl): tr += f'<tr class="rempty" data-only="{rg}"><td colspan="9">{REG_EMPTY[rg]}</td></tr>'
-        stores = sorted({STORE_NAMES[v["store"]] for v in vl})
+        stores = sorted({STORE_NAMES[v["store"]] for v in vl if not v["pro_stock"]})
         def figs_for(vl):
           new = [v for v in vl if not v["pro_stock"]]
           inst = [v for v in new if v["available"]]
@@ -347,7 +395,7 @@ def main():
         photo = (f'<figure class="photo"><img src="{ph["file"]}" alt="{e(b)} {e(m)} hockey stick" width="{ph["w"]}" height="{ph["h"]}" loading="lazy" decoding="async">'
                  f'<figcaption>Product photo: {e(STORE_NAMES[ph["store"]])}</figcaption></figure>') if ph else ""
         body = f'''<div class="w page"><p class="crumb"><a href="/sticks/">Sticks</a> / {e(b)}</p><div class="{'phead has-photo' if ph else 'phead'}"><div><p class="kicker">{e(b)}</p><h1>{e(m)}</h1>
-<p class="lede">Tracking {len(vl)} variants at {", ".join(stores)}. New sticks and pro stock are kept separate, and lowest-ever counts new sticks only. {fxnote}</p>{ps_link(s, ps_by_model)}</div>{photo}</div>
+<p class="lede">Tracking {sum(1 for v in vl if not v["pro_stock"])} retail variants at {", ".join(stores) or "no retail store right now"}. New sticks and pro stock are kept separate, and lowest-ever counts new sticks only. {fxnote}</p>{ps_link(s, ps_by_model)}</div>{photo}</div>
 {rsw(figs_for(vl), figs_for([v for v in vl if v["currency"]=="CAD"]).replace("No stores", "No Canadian stores"), figs_for([v for v in vl if v["currency"]=="USD"]).replace("No stores", "No US stores"))}<h2 class="h2">Price history</h2>{chart(series)}<h2 class="h2">Every variant: senior first, cheapest in stock first</h2>
 <div class="tw"><table><thead><tr><th>Store</th><th>Size</th><th>Curve</th><th class="num">Flex</th><th>Hand</th><th class="num">Price</th><th class="num">Low</th><th>Stock</th><th></th></tr></thead><tbody>{tr}</tbody></table></div></div>'''
         desc = f"Current and lowest-ever prices for the {b} {m} hockey stick by curve, flex and hand."
@@ -374,9 +422,13 @@ def main():
     links = []
     for (c, f, sz), vl in sorted(combos.items()):
         path = f"/curves/{cslug(c)}-{f}-flex-{slug(sz)}/"; links.append((path, f"{c} {f} flex {sz}"))
-        inst = sorted([v for v in vl if v["available"]], key=lambda v: v["price"])
+        inst = sorted([v for v in vl if v["available"] and not v["pro_stock"]], key=lambda v: v["price"])
+        psx = [x for x in PS if x["flex"] == f and x["size"] == sz and (x["rcurve"] == c or norm_curve(x.get("curve")) == c)]
+        ps_sec = (f'<section class="pssec"><h2 class="h2">Pro stock <span class="psbadge">Separate from retail</span></h2><p class="sub">{len(psx)} pro stock sticks in this spec from pro stock sellers. '
+                  f'Player-spec team sticks, graded by each store; prices in the store\'s currency, cheapest first. <a href="/pro-stock/">All pro stock →</a></p>'
+                  f'<ol class="deals pslist">{"".join(ps_li(x, MODEL_NAMES) for x in psx[:40])}</ol></section>') if psx else ""
         body = f'''<div class="w page"><p class="crumb"><a href="/curves/">Curve + flex</a></p><h1>{e(c)} {e(f)} flex {e(sz.lower())} hockey sticks: best prices</h1>
-<p class="sub">{len(inst)} in-stock options across {len({v["model_slug"] for v in inst})} models, cheapest first. Prices in original currency.</p>{rsw(deals_ol(inst[:30], "Nothing in stock right now."), deals_ol([v for v in inst if v["currency"]=="CAD"][:30], REG_EMPTY["ca"]), deals_ol([v for v in inst if v["currency"]=="USD"][:30], REG_EMPTY["us"]))}</div>'''
+<p class="sub">{len(inst)} in-stock retail options across {len({v["model_slug"] for v in inst})} models, cheapest first. Prices in original currency.</p>{rsw(deals_ol(inst[:30], "No retail stock in this spec right now."), deals_ol([v for v in inst if v["currency"]=="CAD"][:30], REG_EMPTY["ca"]), deals_ol([v for v in inst if v["currency"]=="USD"][:30], REG_EMPTY["us"]))}{ps_sec}</div>'''
         write(path, page(f"{c} {f} flex {sz} hockey stick deals | {SITE}", body))
     write("/curves/", page(f"Hockey stick deals by curve and flex | {SITE}", "<div class='w page'><p class='kicker'>Shop your spec</p><h1>Curve + flex</h1><p class='lede'>Every curve, flex and size combo with at least four live listings.</p><div class='chips'>" + "".join(f'<a href="{p}">{e(t)}</a>' for p, t in links) + "</div></div>"))
 
@@ -399,7 +451,7 @@ Sources: <a href="https://www.reddit.com/r/hockeyplayers/comments/szj2o9/best_ti
 <p class="lede">Twig Deals tracks player hockey stick prices at {len(STORES)} stores, curve by curve and flex by flex, and keeps the history so you can see what actually dropped.</p>
 <h2>Stores we track</h2><p>Prices are shown in the currency each store lists. On stick pages, the headline lowest-price figures convert CAD to USD at the Bank of Canada rate so stores can be compared.</p>
 <ul class="index">{srows}</ul>
-<h2>What we collect</h2><p>Senior, intermediate, junior and youth player sticks from the models in our index. Goalie sticks, blades, shafts, tape and accessories are left out. Pro stock and used sticks are tagged and never count toward the lowest-ever price.</p><h2>Pro stock section</h2><p>The <a href="/pro-stock/">Pro stock page</a> lists player sticks from <a href="https://www.prostockhockey.com/player-sticks/" rel="noopener">Pro Stock Hockey</a> (US, USD): one-off team sticks with the player's real model, curve, flex and lie. It is kept apart from the retail stores above and never counts toward deals, price history or lowest-ever prices.</p>
+<h2>What we collect</h2><p>Senior, intermediate, junior and youth player sticks from the models in our index. Goalie sticks, blades, shafts, tape and accessories are left out. Pro stock sticks are listed only on the Pro stock page and never count toward the lowest-ever price.</p><h2>Pro stock section</h2><p>The <a href="/pro-stock/">Pro stock page</a> lists player-spec team sticks from three pro stock sellers, <a href="https://www.prostockhockey.com/player-sticks/" rel="noopener">Pro Stock Hockey</a> (US, USD), <a href="https://prostocknorthamerica.com/" rel="noopener">Pro Stock North America</a> and <a href="https://northprostock.com/" rel="noopener">North Prostock</a> (Canada, CAD), plus the pro stock sticks our retail stores carry. Each stick shows the store&rsquo;s condition grade. It is kept apart from the retail stores above and never counts toward deals, price history or lowest-ever prices.</p>
 <h2>How we collect</h2><p>Twice a day, our collector reads each store's public product feed. It identifies itself as TwigDealsBot, checks the store's robots.txt first, and waits between requests. A store that asks us not to read its feed is skipped.</p>
 <h2>Links</h2><p>Store links go straight to the product page. Some links may earn us a commission at no cost to you; that never changes the order or the prices we show. Prices change quickly, so confirm on the store page before you buy.</p></article>"""
     write("/about/", page(f"About Twig Deals and the stores we track | {SITE}", about, f"How Twig Deals tracks hockey stick prices at {len(STORES)} stores: {', '.join(n for _, n, _, _ in STORES)}."))

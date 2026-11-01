@@ -305,6 +305,8 @@ def main():
         import prostock
         try: prostock.main(db, ts)
         except Exception as e: db.rollback(); print(f"Pro Stock Hockey: FAILED {e}")
+        import prostock_shopify
+        prostock_shopify.main(db, ts)
     db.close()
 
 if __name__ == "__main__":

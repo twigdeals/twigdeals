@@ -77,6 +77,12 @@ def init(db):
       listed INTEGER, first_seen TEXT, last_seen TEXT, detail_ts TEXT);
     CREATE TABLE IF NOT EXISTS prostock_prices(id TEXT, ts TEXT, price REAL, stock INTEGER, instock INTEGER);
     CREATE TABLE IF NOT EXISTS runs(ts TEXT, store TEXT, products INTEGER, matched INTEGER, variants INTEGER, status TEXT);""")
+    migrate(db)
+
+def migrate(db):
+    cols = {r[1] for r in db.execute("PRAGMA table_info(prostock)")}
+    if "store" not in cols: db.execute("ALTER TABLE prostock ADD COLUMN store TEXT DEFAULT 'prostockhockey'")
+    if "condition" not in cols: db.execute("ALTER TABLE prostock ADD COLUMN condition TEXT")
 
 def model_slug(brand, model, models):
     """Real Model field -> our retail model page slug (same matcher as retail titles), else None."""
@@ -90,7 +96,7 @@ def run(db, ts):
     lst = listing()
     keep = {k: v for k, v in lst.items() if not SKIP_CAT.search(v["cats"].replace("Hockey Sticks/Player Sticks", ""))
             and "/goalie-sticks/" not in v["url"]}
-    db.execute("UPDATE prostock SET listed=0")
+    db.execute("UPDATE prostock SET listed=0 WHERE coalesce(store,'prostockhockey')='prostockhockey'")
     for p in keep.values():
         db.execute("""INSERT INTO prostock(id,url,title,brand,cats,price,currency,listed,first_seen,last_seen) VALUES(?,?,?,?,?,?,'USD',1,?,?)
           ON CONFLICT(id) DO UPDATE SET url=excluded.url,title=excluded.title,cats=excluded.cats,price=excluded.price,listed=1,last_seen=excluded.last_seen""",
