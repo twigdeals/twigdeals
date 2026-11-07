@@ -84,6 +84,8 @@ html[data-region="ca"] tr[data-has]:not([data-has~="ca"]),html[data-region="us"]
 html[data-region="ca"] p[data-only="ca"]{display:block}
 .psbadge{font:700 11px/1.1 var(--display);letter-spacing:.1em;text-transform:uppercase;background:var(--ink);color:#fff;padding:5px 6px;text-align:center;align-self:start}
 .pslist .pscard{display:grid;grid-template-columns:76px minmax(0,1fr) 150px 80px;align-items:center;gap:var(--s3);padding:var(--s3) var(--s3) var(--s3) 0;border-bottom:1px solid var(--line)}
+/* display:grid above wins over the user-agent [hidden] rule, so a filtered card stayed on screen. */
+.pslist .pscard[hidden]{display:none!important}
 .pscard .d-name>*{display:block}.pscard .dr,.pscard .who{font-size:13px;color:var(--mute)}
 .pscard .d-price small{margin-left:4px}.pscard .d-price span{display:block;font-size:13px}
 .psf{display:flex;flex-wrap:wrap;gap:var(--s3);align-items:end;margin:var(--s5) 0 var(--s3)}
