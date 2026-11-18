@@ -60,6 +60,76 @@ def norm_curve(c):
     c = re.sub(r"\s*\(.*\)", "", c).strip().upper().replace("1/4", "").replace("+", "+")
     return c
 
+# Black Friday / Cyber Monday retail deals. Rebuilt by the regular collect-and-deploy run.
+# Sports Excellence is left out: its stock flag is untrustworthy (shown as "check store").
+# Pro stock is never included; it has its own /pro-stock/ section.
+BF_MIN_PCT = 10
+BF_SKIP_STORES = {"sportsexcellence"}
+# Homepage banner and red nav link come down after the end of Cyber Monday 2026
+# (midnight at the start of Dec 1, America/Detroit). The /black-friday/ page stays up.
+# A matching client-side check hides a stale pre-cutoff build.
+BF_TZ = ZoneInfo("America/Detroit")
+BF_PROMO_UNTIL = datetime(2026, 12, 1, 0, 0, 0, tzinfo=BF_TZ)
+# Date.UTC month is 0-based (11 = December). Midnight Detroit on Dec 1, 2026 is 05:00 UTC (EST).
+BF_PROMO_JS = '<script>try{if(Date.now()>=Date.UTC(2026,11,1,5,0,0))document.documentElement.classList.add("bf-over")}catch(e){}</script>'
+BF_NAV = '<a class="nav-bf" href="/black-friday/">Black Friday</a>'
+BF_BANNER = '<aside class="bf-banner"><div class="w"><a href="/black-friday/"><strong>Black Friday 2026</strong> In-stock hockey stick deals, ranked by real discount. Updated twice a day through Cyber Monday. <span>See the deals →</span></a></div></aside>'
+
+def bf_promo_active(now=None):
+    """True through the end of Cyber Monday 2026 (America/Detroit)."""
+    now = datetime.now(BF_TZ) if now is None else now
+    if now.tzinfo is None:
+        now = now.replace(tzinfo=BF_TZ)
+    return now.astimezone(BF_TZ) < BF_PROMO_UNTIL
+
+def bf_promo_parts(now=None):
+    """Nav link, homepage banner, and head script while the promo is on; empty strings after."""
+    if not bf_promo_active(now):
+        return "", "", ""
+    return BF_NAV, BF_BANNER, BF_PROMO_JS
+
+def bf_reference(price, compare_at, tracked_prices):
+    """Reference price for a Black Friday % off: the higher of the store's list
+    (compare-at) price and the highest price we have actually tracked.
+    Returns (ref, basis) or (None, None) when there is no real discount."""
+    highs = [p for p in tracked_prices if p is not None]
+    all_high = max(highs) if highs else None
+    ref = max(filter(None, [compare_at, all_high]), default=None)
+    if not ref or price is None or ref <= price:
+        return None, None
+    if compare_at and compare_at >= (all_high or 0) and compare_at > price:
+        basis = "vs. list price"
+    else:
+        basis = "vs. tracked high"
+    return ref, basis
+
+def bf_pct(price, ref):
+    if not ref or price is None or ref <= price:
+        return 0
+    return int(round(100 * (ref - price) / ref))
+
+def bf_prior_price(history, before_ts):
+    """Most recent price observed strictly before before_ts. history is oldest-first dicts with ts/price."""
+    prior = [x for x in history if x["ts"] < before_ts]
+    return prior[-1]["price"] if prior else None
+
+def bf_best(rows, pct_key, limit=16, size=None, region=None, drop_key=None):
+    """Best in-stock cut per model, 10%+ only. Optional size and Canada/US region filter."""
+    groups = defaultdict(list)
+    for v in rows:
+        if v.get(pct_key, 0) < BF_MIN_PCT:
+            continue
+        if size is not None and v.get("size") != size:
+            continue
+        if region is not None and REG[v["currency"]] != region:
+            continue
+        groups[v["model_slug"]].append(v)
+    def sort_key(v):
+        drop = v.get(drop_key) if drop_key else 0
+        return (-v[pct_key], -(drop or 0), v["price"])
+    best = [max(vl, key=lambda v: (v[pct_key], v.get(drop_key) or 0, -v["price"])) for vl in groups.values()]
+    return sorted(best, key=sort_key)[:limit]
+
 CSS = open(ROOT / "static/site.css").read()
 import hashlib
 CSS_V = hashlib.md5((open(ROOT/"static/fonts/fonts.css").read()+CSS).encode()).hexdigest()[:10]
@@ -118,11 +188,12 @@ def page(title, body, desc="", head=""):
     # the beacon (zone twigdeals.com, site tag a73d3fc2...). A manual copy loads first, claims
     # window.__cfBeacon without a "version", and makes the beacon POST to
     # cloudflareinsights.com/cdn-cgi/rum, which 404s, so no visits get recorded.
+    nav_bf, _, promo_js = bf_promo_parts()
     return newtab(f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(title)}</title><meta name="description" content="{e(desc or TAGLINE)}"><meta name="theme-color" content="#0E0F11"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta property="og:type" content="website"><meta property="og:site_name" content="Twig Deals"><meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc or TAGLINE)}"><meta property="og:image" content="https://twigdeals.com/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://twigdeals.com/og.png">
-<link rel="preload" href="/fonts/BarlowCondensed-800.woff2" as="font" type="font/woff2" crossorigin>{RHEAD}<link rel="stylesheet" href="/style.css?v={CSS_V}">{head}</head><body>
-<header class="top"><div class="w bar"><a class="logo" href="/">{LOGO}</a>{RTOGGLE}<nav><a href="/sticks/">Sticks</a><a href="/curves/">Curve + flex</a><a href="/pro-stock/">Pro stock</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">Sale calendar</a><a href="/about/">About</a><a class="nav-cta" href="#newsletter">Weekly drops</a></nav></div></header>
-<main><p class="w rnote">Canadian stores list prices in CAD and ship to the US; on their sites US visitors may see different prices or stock.</p>{body}{NEWSLETTER}</main><footer><div class="w foot"><div>{LOGO}<p>Hockey stick price tracker. Prices are pulled from retailer sites twice a day and can change; confirm on the store page before you buy. Some links earn us a commission at no cost to you. CAD and USD are shown as listed, not converted.</p><p>Stores tracked: {e(", ".join(n for _, n, _, _ in STORES))}. Pro stock page (listed separately): Pro Stock Hockey, Pro Stock North America, North Prostock, plus pro stock from HockeyStickMan, Ice Warehouse, TheHockeyShop.com, Just Hockey and Hockey Monkey.</p></div><div class="flinks"><a href="/sticks/">All sticks</a><a href="/curves/">Curve + flex</a><a href="/pro-stock/">Pro stock</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">When sticks go on sale</a><a href="/about/">About + stores</a></div></div></footer></body></html>""")
+<link rel="preload" href="/fonts/BarlowCondensed-800.woff2" as="font" type="font/woff2" crossorigin>{promo_js}{RHEAD}<link rel="stylesheet" href="/style.css?v={CSS_V}">{head}</head><body>
+<header class="top"><div class="w bar"><a class="logo" href="/">{LOGO}</a>{RTOGGLE}<nav><a href="/sticks/">Sticks</a><a href="/curves/">Curve + flex</a><a href="/pro-stock/">Pro stock</a>{nav_bf}<a href="/guides/when-do-hockey-sticks-go-on-sale/">Sale calendar</a><a href="/about/">About</a><a class="nav-cta" href="#newsletter">Weekly drops</a></nav></div></header>
+<main><p class="w rnote">Canadian stores list prices in CAD and ship to the US; on their sites US visitors may see different prices or stock.</p>{body}{NEWSLETTER}</main><footer><div class="w foot"><div>{LOGO}<p>Hockey stick price tracker. Prices are pulled from retailer sites twice a day and can change; confirm on the store page before you buy. Some links earn us a commission at no cost to you. CAD and USD are shown as listed, not converted.</p><p>Stores tracked: {e(", ".join(n for _, n, _, _ in STORES))}. Pro stock page (listed separately): Pro Stock Hockey, Pro Stock North America, North Prostock, plus pro stock from HockeyStickMan, Ice Warehouse, TheHockeyShop.com, Just Hockey and Hockey Monkey.</p></div><div class="flinks"><a href="/sticks/">All sticks</a><a href="/curves/">Curve + flex</a><a href="/pro-stock/">Pro stock</a><a href="/black-friday/">Black Friday deals</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">When sticks go on sale</a><a href="/about/">About + stores</a></div></div></footer></body></html>""")
 
 NEWSLETTER = f"""<section class="nl" id="newsletter"><div class="w nl-in"><div><p class="kicker">Every Thursday</p><h2>The drop sheet.</h2><p>One email. The biggest real price cuts on senior and intermediate twigs, sorted by curve and flex. No fluff.</p></div>
 <!-- NEWSLETTER: Beehiiv free plan, no API. The subscribe page doesn't prefill ?email= (checked Oct 19, 2026), so this is a plain link. -->
@@ -270,6 +341,119 @@ def prostock_page(PS, models):
     write("/pro-stock/", page(f"Pro stock hockey sticks by hand, flex, curve and condition | {SITE}", body,
           "Pro stock NHL and team-issue player sticks from US and Canadian pro stock sellers, with curve, flex, hand, condition and stock, kept separate from retail prices."))
 
+def write_black_friday(live, last_ts, upd, hist):
+    """Retail Black Friday / Cyber Monday deals page at /black-friday/."""
+    rows = [v for v in live
+            if v["available"] and v["last_seen"] == last_ts
+            and not v["pro_stock"] and v["store"] not in BF_SKIP_STORES]
+
+    def card_bf(v, pct_key="bf_pct", ref_key="bf_ref", basis_key="bf_basis", basis_override=None):
+        spec = " · ".join(filter(None, [v["size"] and v["size"][:3].upper() + ".", v["curve"],
+                                       (v["flex"] and v["flex"] + " flex"), v["hand"] and v["hand"][0] + "H"]))
+        ref = v.get(ref_key)
+        was = f'<s>{ref:,.2f}</s>' if ref and ref > v["price"] else ""
+        basis = basis_override or v.get(basis_key) or ""
+        basis_h = f'<span class="bf-basis">{e(basis)}</span>' if basis else ""
+        pct = v.get(pct_key) or 0
+        badge = f'<span class="drop">−{pct}%</span>' if pct else '<span class="drop zero">—</span>'
+        return f"""<li class="deal" data-r="{REG[v['currency']]}">{badge}<div class="d-name"><span class="brand">{e(v["brand"])}</span><a href="/sticks/{v["model_slug"]}/">{e(v["model"])}</a><span class="spec">{e(spec)}</span></div>
+<div class="d-store">{e(STORE_NAMES[v["store"]])}</div><div class="d-spark">{spark([x["price"] for x in hist[v["id"]]])}</div>
+<div class="d-price"><b>{v["price"]:,.2f}</b><small>{v["currency"]}</small>{was}{basis_h}</div><a class="go" rel="sponsored nofollow" href="{e(aff(v["store"], v["url"]))}" aria-label="View at {e(STORE_NAMES[v["store"]])}">View →</a></li>"""
+
+    def ol(vs, empty, **card_kw):
+        return f'<ol class="deals">{"".join(card_bf(v, **card_kw) for v in vs) or f"<li class=empty>{empty}</li>"}</ol>'
+
+    def section(sid, title, blurb, picked_all, picked_ca, picked_us, empty, empty_ca, empty_us, **card_kw):
+        return (f'<section class="w block" id="{e(sid)}"><div class="sec-head"><h2>{e(title)}</h2><p>{blurb}</p></div>'
+                f'{rsw(ol(picked_all, empty, **card_kw), ol(picked_ca, empty_ca, **card_kw), ol(picked_us, empty_us, **card_kw))}</section>')
+
+    def pick(key, drop, limit=16, size=None, region=None):
+        return bf_best(rows, key, limit=limit, size=size, region=region, drop_key=drop)
+
+    size_sections = []
+    for sid, size, title in (("senior", "Senior", "Top senior deals"),
+                             ("intermediate", "Intermediate", "Top intermediate deals"),
+                             ("junior", "Junior", "Top junior deals"),
+                             ("youth", "Youth", "Top youth deals")):
+        all_ = pick("bf_pct", "bf_drop", size=size)
+        if not all_ and size == "Youth":
+            continue
+        size_sections.append(section(
+            sid, title,
+            "Best in-stock cut per model. % off is versus the store's list price or the highest price Twig Deals has tracked for that stick.",
+            all_, pick("bf_pct", "bf_drop", size=size, region="ca"), pick("bf_pct", "bf_drop", size=size, region="us"),
+            f"No in-stock {size.lower()} deals of {BF_MIN_PCT}%+ right now.",
+            f"No Canadian stores have a {BF_MIN_PCT}%+ {size.lower()} deal right now.",
+            f"No US stores have a {BF_MIN_PCT}%+ {size.lower()} deal right now."))
+
+    card24 = dict(pct_key="pct_24h", ref_key="prior_24h", basis_override="vs. prior day")
+    card7 = dict(pct_key="pct_7d", ref_key="prior_7d", basis_override="vs. 7 days ago")
+    sec_24 = section(
+        "last-24-hours", "Dropped in the last 24 hours",
+        "Sticks whose price is lower than the last price we recorded more than 24 hours ago. % is versus that earlier price, not the all-time high. This list is often short between checks; it fills in when stores actually cut a price.",
+        pick("pct_24h", "drop_24h"), pick("pct_24h", "drop_24h", region="ca"), pick("pct_24h", "drop_24h", region="us"),
+        "No new 10%+ drops since the last check a day ago.",
+        "No new 10%+ drops at Canadian stores since the last check a day ago.",
+        "No new 10%+ drops at US stores since the last check a day ago.",
+        **card24)
+    sec_7 = section(
+        "last-7-days", "Dropped in the last 7 days",
+        "Sticks whose price is lower than the last price we recorded more than 7 days ago. % is versus that earlier price. Stores without a price that old are left out of this section.",
+        pick("pct_7d", "drop_7d"), pick("pct_7d", "drop_7d", region="ca"), pick("pct_7d", "drop_7d", region="us"),
+        "No 10%+ drops against a price from 7 days ago.",
+        "No 10%+ drops at Canadian stores against a price from 7 days ago.",
+        "No 10%+ drops at US stores against a price from 7 days ago.",
+        **card7)
+
+    jumplinks = [("senior", "Senior"), ("intermediate", "Intermediate"), ("junior", "Junior")]
+    if any('id="youth"' in s for s in size_sections):
+        jumplinks.append(("youth", "Youth"))
+    jumplinks += [("last-24-hours", "Last 24 hours"), ("last-7-days", "Last 7 days")]
+    chips = "".join(f'<a href="#{sid}">{e(lab)}</a>' for sid, lab in jumplinks)
+    n_deals = len({v["model_slug"] for v in rows if v.get("bf_pct", 0) >= BF_MIN_PCT})
+    body = f"""<section class="hero"><div class="w"><p class="kicker">Last updated {upd:%b %-d, %Y} · {upd:%-I:%M %p} ET</p>
+<h1>Black Friday<br>hockey stick<br>deals <em>2026</em></h1>
+<p class="lede">In-stock retail sticks, ranked by real discount: the current price versus the store's list price or the highest price Twig Deals has tracked. Deals update twice a day through Black Friday and Cyber Monday (November 27 and November 30, 2026). Prices can change, so confirm on the store's own site before you buy.</p>
+<p class="meta bf-note">{n_deals} models have a {BF_MIN_PCT}%+ in-stock cut right now. Pro stock is listed separately on the <a href="/pro-stock/">pro stock page</a>. Sports Excellence is left out because we can't reliably tell what's in stock there. Price history starts in mid-October 2026, so &ldquo;highest tracked&rdquo; is the high since then, not a full-year regular price. Use the All / Canada / US toggle to filter stores.</p>
+<div class="chips">{chips}</div></div></section>
+{''.join(size_sections)}{sec_24}{sec_7}"""
+
+    listed = bf_best(rows, "bf_pct", limit=24, drop_key="bf_drop")
+    elements = []
+    for i, v in enumerate(listed, 1):
+        elements.append({
+            "@type": "ListItem", "position": i,
+            "item": {
+                "@type": "Product",
+                "name": f"{v['brand']} {v['model']}",
+                "url": f"https://twigdeals.com/sticks/{v['model_slug']}/",
+                "offers": {
+                    "@type": "Offer",
+                    "price": f"{v['price']:.2f}",
+                    "priceCurrency": v["currency"],
+                    "url": aff(v["store"], v["url"]),
+                    "availability": "https://schema.org/InStock",
+                    "seller": {"@type": "Organization", "name": STORE_NAMES[v["store"]]},
+                },
+            },
+        })
+    bf_ld = ld({"@context": "https://schema.org", "@graph": [
+        {"@type": "WebPage", "@id": "https://twigdeals.com/black-friday/#webpage",
+         "url": "https://twigdeals.com/black-friday/",
+         "name": "Black Friday Hockey Stick Deals 2026",
+         "description": "In-stock hockey stick deals for Black Friday and Cyber Monday 2026, ranked by real discount at US and Canadian stores.",
+         "isPartOf": {"@id": "https://twigdeals.com/#website"},
+         "dateModified": last_ts},
+        {"@type": "ItemList", "@id": "https://twigdeals.com/black-friday/#deals",
+         "name": "Black Friday hockey stick deals 2026",
+         "itemListOrder": "https://schema.org/ItemListOrderDescending",
+         "numberOfItems": len(elements), "itemListElement": elements},
+    ]})
+    title = f"Black Friday Hockey Stick Deals 2026 | {SITE}"
+    desc = "In-stock hockey stick deals for Black Friday and Cyber Monday 2026, ranked by real discount at US and Canadian stores. Prices update twice a day. Confirm on the store's site before you buy."
+    write("/black-friday/", page(title, body, desc, bf_ld))
+
+
 def main():
     if OUT.exists(): shutil.rmtree(OUT)
     OUT.mkdir()
@@ -284,6 +468,7 @@ def main():
     hist = defaultdict(list)
     for r in db.execute("SELECT * FROM prices ORDER BY ts"): hist[r["variant_id"]].append(dict(r))
     week_ago = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    day_ago = (datetime.now(timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
     for vid, v in vs.items():
         h = hist[vid]; cur = h[-1]
         v["size"] = v["size"] or size_from_flex(v["flex"])  # same flex fallback as the collector
@@ -295,6 +480,18 @@ def main():
         v["drop"] = (ref - v["price"]) if ref and ref > v["price"] else 0
         v["drop_pct"] = round(100 * v["drop"] / ref) if v["drop"] else 0
         v["drop_basis"] = "vs. 7-day high" if v["week_high"] and v["week_high"] > v["price"] else "vs. store's list price"
+        ref_bf, basis_bf = bf_reference(v["price"], v["compare_at"], [x["price"] for x in h])
+        v["bf_ref"], v["bf_basis"] = ref_bf, basis_bf
+        v["bf_drop"] = (ref_bf - v["price"]) if ref_bf else 0
+        v["bf_pct"] = bf_pct(v["price"], ref_bf)
+        prior24 = bf_prior_price(h, day_ago)
+        v["prior_24h"] = prior24
+        v["drop_24h"] = (prior24 - v["price"]) if prior24 and prior24 > v["price"] else 0
+        v["pct_24h"] = bf_pct(v["price"], prior24) if v["drop_24h"] else 0
+        prior7 = bf_prior_price(h, week_ago)
+        v["prior_7d"] = prior7
+        v["drop_7d"] = (prior7 - v["price"]) if prior7 and prior7 > v["price"] else 0
+        v["pct_7d"] = bf_pct(v["price"], prior7) if v["drop_7d"] else 0
     live_all = [v for v in vs.values() if v["current"]]
     live = [v for v in live_all if not v["pro_stock"]]  # pro stock lives on /pro-stock/ only
     models = defaultdict(list)
@@ -340,7 +537,9 @@ def main():
     n_reg = {rg: sum(1 for v in live if v["available"] and REG[v["currency"]] == rg) for rg in ("ca", "us")}
     upd = datetime.strptime(last_ts, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc).astimezone(ET)
     elite_low = sorted([v for v in live if v["available"] and not v["pro_stock"] and v["size"]=="Senior"], key=lambda v: v["price"])
-    body = f"""<section class="hero"><div class="w"><p class="kicker">Updated {upd:%b %-d, %Y} · {upd:%-I:%M %p} ET</p>
+    _, banner, _ = bf_promo_parts()
+    banner = (banner + "\n") if banner else ""
+    body = f"""{banner}<section class="hero"><div class="w"><p class="kicker">Updated {upd:%b %-d, %Y} · {upd:%-I:%M %p} ET</p>
 <h1>Stop paying<br>full price for<br>a <em>twig.</em></h1>
 <p class="lede">We check every stick at {len(STORE_NAMES)} stores twice a day, curve by curve and flex by flex, and show you what actually dropped.</p>
 <dl class="figs"><div><dt>Models tracked</dt><dd>{len(models)}</dd></div><div><dt>Variants</dt><dd>{len(live):,}</dd></div><div><dt>In stock now</dt><dd><span class="ro-all">{n_instock:,}</span><span class="ro-ca">{n_reg["ca"]:,}</span><span class="ro-us">{n_reg["us"]:,}</span></dd></div><div><dt>Stores</dt><dd>{len(STORES)}</dd></div></dl></div></section>
@@ -352,6 +551,7 @@ def main():
         {"@type": "WebSite", "@id": "https://twigdeals.com/#website", "name": SITE, "url": "https://twigdeals.com/", "description": "Hockey stick price tracker: current and lowest-ever prices by curve, flex and hand at " + str(len(STORES)) + " stores.", "publisher": {"@id": "https://twigdeals.com/#org"}, "inLanguage": "en"},
         {"@type": "Organization", "@id": "https://twigdeals.com/#org", "name": SITE, "url": "https://twigdeals.com/", "logo": "https://twigdeals.com/icon-512.png", "sameAs": [BEEHIIV_BASE_URL]}]})
     write("/", page(f"{SITE}: hockey stick price tracker", body, "Track hockey stick prices and the best drops this week across Bauer, CCM, Warrior, True and Sherwood.", home_ld))
+    write_black_friday(live, last_ts, upd, hist)
     # Machine-readable current top deals (same list as the homepage)
     # Real 404 page (Cloudflare Pages serves dist/404.html with status 404 for unknown paths). noindex, no canonical.
     (OUT / "region.js").write_text(REGION_JS)
@@ -459,10 +659,10 @@ def main():
 Sources: <a href="https://www.reddit.com/r/hockeyplayers/comments/go9o7g/what_time_of_the_year_is_it_cheaper_to_order_new/">r/hockeyplayers: cheaper time of year</a>, <a href="https://www.reddit.com/r/hockeyplayers/comments/1n5uqiv/best_spot_to_buy_new_sticks/">r/hockeyplayers: best spot to buy new sticks</a>.</p>
 <h2>2. Store year-end and summer clearance</h2><p>Some shops run year-end sales in summer. One player says Perani's in Michigan "typically [has] year-end sales in July every year". In Canada, Sport Chek has paired clearance with an extra 25% off. Players also warn that brands stagger releases and stores are getting better at running down stock, so there's no single sale date.
 Source: <a href="https://www.reddit.com/r/hockeyplayers/comments/1kuauq1/best_time_of_year_to_buy_gear_on_sale/">r/hockeyplayers: best time of year to buy gear on sale</a>.</p>
-<h2>3. Holiday and end-of-season sales</h2><p>Players point to holiday and end-of-season sales as the other good windows, and say last year's clearance is often cheaper than the current model ever gets.
+<h2>3. Holiday and end-of-season sales</h2><p>Players point to holiday and end-of-season sales as the other good windows, and say last year's clearance is often cheaper than the current model ever gets. For this year's prices, see <a href="/black-friday/">Black Friday hockey stick deals 2026</a>.
 Sources: <a href="https://www.reddit.com/r/hockeyplayers/comments/szj2o9/best_time_to_buy_new_hockey_gear/">r/hockeyplayers: best time to buy new gear</a>, <a href="https://www.reddit.com/r/hockeyplayers/comments/18pdf4g/really_how_much_should_a_stick_cost/">r/hockeyplayers: how much should a stick cost</a>.</p>
 <h2>4. Buy last year's flagship or pro stock</h2><p>Many players aim for $150–$250 by buying the previous flagship on clearance or pro stock sticks instead of paying $350–$400+ for the newest model (same threads as above).</p>
-<h2>How to use Twig Deals</h2><p>Open your stick's page to see current prices by curve, flex and hand at every tracked store, along with the lowest price we've seen. Or browse <a href="/curves/">by curve and flex</a>. Sign up below for the weekly deals email.</p></article>"""
+<h2>How to use Twig Deals</h2><p>Open your stick's page to see current prices by curve, flex and hand at every tracked store, along with the lowest price we've seen. Or browse <a href="/curves/">by curve and flex</a>, or this year's <a href="/black-friday/">Black Friday deals</a>. Sign up below for the weekly deals email.</p></article>"""
     write("/guides/when-do-hockey-sticks-go-on-sale/", page(f"When do hockey sticks go on sale? | {SITE}", guide, "When hockey sticks go on sale: new-model launches, summer clearance and holiday sales, with sources."))
     # About: what we track and how. TwigDealsBot's user agent points here.
     srows = "".join(f'<li><a href="{e(u)}" rel="noopener"><span>{c}</span> {e(n)}</a></li>' for i, n, u, c in STORES)
@@ -497,6 +697,7 @@ Currently tracking {len(models)} stick models and {len(live):,} live variants (s
 ## Key pages
 
 - [Home: this week's biggest drops](https://twigdeals.com/)
+- [Black Friday hockey stick deals 2026](https://twigdeals.com/black-friday/): in-stock retail sticks ranked by real discount (current price vs. the store's list price or the highest price tracked)
 - [All tracked sticks](https://twigdeals.com/sticks/): one page per model with every variant, current price, lowest-ever price and stock at each store
 - [Deals by curve and flex](https://twigdeals.com/curves/)
 - [When do hockey sticks go on sale?](https://twigdeals.com/guides/when-do-hockey-sticks-go-on-sale/)
