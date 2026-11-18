@@ -102,6 +102,7 @@ html[data-region="ca"] p[data-only="ca"]{display:block}
 .pssec{margin-top:var(--s6)}.pssec .psbadge{vertical-align:middle;margin-left:8px;font-size:10px}
 
 .nav-bf{color:var(--red);opacity:1!important}
+html.bf-over .nav-bf,html.bf-over .bf-banner{display:none!important}
 .bf-banner{background:var(--red);color:#fff}
 .bf-banner a{display:flex;justify-content:space-between;align-items:center;gap:var(--s3);text-decoration:none;color:#fff;font:600 16px/1.25 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:14px 0}
 .bf-banner strong{font-weight:800;margin-right:8px}

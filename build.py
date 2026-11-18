@@ -65,6 +65,28 @@ def norm_curve(c):
 # Pro stock is never included; it has its own /pro-stock/ section.
 BF_MIN_PCT = 10
 BF_SKIP_STORES = {"sportsexcellence"}
+# Homepage banner and red nav link come down after the end of Cyber Monday 2026
+# (midnight at the start of Dec 1, America/Detroit). The /black-friday/ page stays up.
+# A matching client-side check hides a stale pre-cutoff build.
+BF_TZ = ZoneInfo("America/Detroit")
+BF_PROMO_UNTIL = datetime(2026, 12, 1, 0, 0, 0, tzinfo=BF_TZ)
+# Date.UTC month is 0-based (11 = December). Midnight Detroit on Dec 1, 2026 is 05:00 UTC (EST).
+BF_PROMO_JS = '<script>try{if(Date.now()>=Date.UTC(2026,11,1,5,0,0))document.documentElement.classList.add("bf-over")}catch(e){}</script>'
+BF_NAV = '<a class="nav-bf" href="/black-friday/">Black Friday</a>'
+BF_BANNER = '<aside class="bf-banner"><div class="w"><a href="/black-friday/"><strong>Black Friday 2026</strong> In-stock hockey stick deals, ranked by real discount. Updated twice a day through Cyber Monday. <span>See the deals →</span></a></div></aside>'
+
+def bf_promo_active(now=None):
+    """True through the end of Cyber Monday 2026 (America/Detroit)."""
+    now = datetime.now(BF_TZ) if now is None else now
+    if now.tzinfo is None:
+        now = now.replace(tzinfo=BF_TZ)
+    return now.astimezone(BF_TZ) < BF_PROMO_UNTIL
+
+def bf_promo_parts(now=None):
+    """Nav link, homepage banner, and head script while the promo is on; empty strings after."""
+    if not bf_promo_active(now):
+        return "", "", ""
+    return BF_NAV, BF_BANNER, BF_PROMO_JS
 
 def bf_reference(price, compare_at, tracked_prices):
     """Reference price for a Black Friday % off: the higher of the store's list
@@ -166,10 +188,11 @@ def page(title, body, desc="", head=""):
     # the beacon (zone twigdeals.com, site tag a73d3fc2...). A manual copy loads first, claims
     # window.__cfBeacon without a "version", and makes the beacon POST to
     # cloudflareinsights.com/cdn-cgi/rum, which 404s, so no visits get recorded.
+    nav_bf, _, promo_js = bf_promo_parts()
     return newtab(f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(title)}</title><meta name="description" content="{e(desc or TAGLINE)}"><meta name="theme-color" content="#0E0F11"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta property="og:type" content="website"><meta property="og:site_name" content="Twig Deals"><meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc or TAGLINE)}"><meta property="og:image" content="https://twigdeals.com/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://twigdeals.com/og.png">
-<link rel="preload" href="/fonts/BarlowCondensed-800.woff2" as="font" type="font/woff2" crossorigin>{RHEAD}<link rel="stylesheet" href="/style.css?v={CSS_V}">{head}</head><body>
-<header class="top"><div class="w bar"><a class="logo" href="/">{LOGO}</a>{RTOGGLE}<nav><a href="/sticks/">Sticks</a><a href="/curves/">Curve + flex</a><a href="/pro-stock/">Pro stock</a><a class="nav-bf" href="/black-friday/">Black Friday</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">Sale calendar</a><a href="/about/">About</a><a class="nav-cta" href="#newsletter">Weekly drops</a></nav></div></header>
+<link rel="preload" href="/fonts/BarlowCondensed-800.woff2" as="font" type="font/woff2" crossorigin>{promo_js}{RHEAD}<link rel="stylesheet" href="/style.css?v={CSS_V}">{head}</head><body>
+<header class="top"><div class="w bar"><a class="logo" href="/">{LOGO}</a>{RTOGGLE}<nav><a href="/sticks/">Sticks</a><a href="/curves/">Curve + flex</a><a href="/pro-stock/">Pro stock</a>{nav_bf}<a href="/guides/when-do-hockey-sticks-go-on-sale/">Sale calendar</a><a href="/about/">About</a><a class="nav-cta" href="#newsletter">Weekly drops</a></nav></div></header>
 <main><p class="w rnote">Canadian stores list prices in CAD and ship to the US; on their sites US visitors may see different prices or stock.</p>{body}{NEWSLETTER}</main><footer><div class="w foot"><div>{LOGO}<p>Hockey stick price tracker. Prices are pulled from retailer sites twice a day and can change; confirm on the store page before you buy. Some links earn us a commission at no cost to you. CAD and USD are shown as listed, not converted.</p><p>Stores tracked: {e(", ".join(n for _, n, _, _ in STORES))}. Pro stock page (listed separately): Pro Stock Hockey, Pro Stock North America, North Prostock, plus pro stock from HockeyStickMan, Ice Warehouse, TheHockeyShop.com, Just Hockey and Hockey Monkey.</p></div><div class="flinks"><a href="/sticks/">All sticks</a><a href="/curves/">Curve + flex</a><a href="/pro-stock/">Pro stock</a><a href="/black-friday/">Black Friday deals</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">When sticks go on sale</a><a href="/about/">About + stores</a></div></div></footer></body></html>""")
 
 NEWSLETTER = f"""<section class="nl" id="newsletter"><div class="w nl-in"><div><p class="kicker">Every Thursday</p><h2>The drop sheet.</h2><p>One email. The biggest real price cuts on senior and intermediate twigs, sorted by curve and flex. No fluff.</p></div>
@@ -514,8 +537,9 @@ def main():
     n_reg = {rg: sum(1 for v in live if v["available"] and REG[v["currency"]] == rg) for rg in ("ca", "us")}
     upd = datetime.strptime(last_ts, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc).astimezone(ET)
     elite_low = sorted([v for v in live if v["available"] and not v["pro_stock"] and v["size"]=="Senior"], key=lambda v: v["price"])
-    body = f"""<aside class="bf-banner"><div class="w"><a href="/black-friday/"><strong>Black Friday 2026</strong> In-stock hockey stick deals, ranked by real discount. Updated twice a day through Cyber Monday. <span>See the deals →</span></a></div></aside>
-<section class="hero"><div class="w"><p class="kicker">Updated {upd:%b %-d, %Y} · {upd:%-I:%M %p} ET</p>
+    _, banner, _ = bf_promo_parts()
+    banner = (banner + "\n") if banner else ""
+    body = f"""{banner}<section class="hero"><div class="w"><p class="kicker">Updated {upd:%b %-d, %Y} · {upd:%-I:%M %p} ET</p>
 <h1>Stop paying<br>full price for<br>a <em>twig.</em></h1>
 <p class="lede">We check every stick at {len(STORE_NAMES)} stores twice a day, curve by curve and flex by flex, and show you what actually dropped.</p>
 <dl class="figs"><div><dt>Models tracked</dt><dd>{len(models)}</dd></div><div><dt>Variants</dt><dd>{len(live):,}</dd></div><div><dt>In stock now</dt><dd><span class="ro-all">{n_instock:,}</span><span class="ro-ca">{n_reg["ca"]:,}</span><span class="ro-us">{n_reg["us"]:,}</span></dd></div><div><dt>Stores</dt><dd>{len(STORES)}</dd></div></dl></div></section>

@@ -18,10 +18,13 @@ BUILD = ROOT / "build.py"
 
 
 def load_bf():
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
     src = BUILD.read_text()
     start = src.index("# Black Friday / Cyber Monday")
     end = src.index("\nCSS = ")
-    ns = {"defaultdict": defaultdict, "REG": {"CAD": "ca", "USD": "us"}}
+    ns = {"defaultdict": defaultdict, "REG": {"CAD": "ca", "USD": "us"},
+          "datetime": datetime, "ZoneInfo": ZoneInfo}
     exec(src[start:end], ns)
     return ns
 
@@ -84,6 +87,42 @@ class BlackFridayRanking(unittest.TestCase):
         self.assertEqual(self.ns["BF_SKIP_STORES"], {"sportsexcellence"})
 
 
+class BlackFridayPromoHide(unittest.TestCase):
+    """Banner and red nav link hide after the end of Cyber Monday 2026 (Detroit)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.ns = load_bf()
+        cls.tz = cls.ns["BF_TZ"]
+
+    def test_active_through_end_of_cyber_monday(self):
+        from datetime import datetime
+        active = self.ns["bf_promo_active"]
+        self.assertTrue(active(datetime(2026, 11, 18, 14, 30, tzinfo=self.tz)))
+        self.assertTrue(active(datetime(2026, 11, 30, 23, 59, 59, tzinfo=self.tz)))
+        self.assertFalse(active(datetime(2026, 12, 1, 0, 0, 0, tzinfo=self.tz)))
+        self.assertFalse(active(datetime(2026, 12, 2, 8, 0, tzinfo=self.tz)))
+
+    def test_parts_present_before_cutoff_empty_after(self):
+        from datetime import datetime
+        parts = self.ns["bf_promo_parts"]
+        nav, banner, js = parts(datetime(2026, 11, 30, 12, 0, tzinfo=self.tz))
+        self.assertIn("nav-bf", nav)
+        self.assertIn("/black-friday/", nav)
+        self.assertIn("bf-banner", banner)
+        self.assertIn("/black-friday/", banner)
+        self.assertIn("bf-over", js)
+        self.assertIn("Date.UTC(2026,11,1,5,0,0)", js)
+        self.assertEqual(parts(datetime(2026, 12, 1, 0, 0, tzinfo=self.tz)), ("", "", ""))
+
+    def test_js_cutoff_is_midnight_detroit_on_dec_1(self):
+        from datetime import datetime, timezone
+        cutoff = self.ns["BF_PROMO_UNTIL"]
+        self.assertEqual(cutoff, datetime(2026, 12, 1, 0, 0, 0, tzinfo=self.tz))
+        self.assertEqual(cutoff.astimezone(timezone.utc),
+                         datetime(2026, 12, 1, 5, 0, 0, tzinfo=timezone.utc))
+
+
 class BlackFridayWiring(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -105,6 +144,13 @@ class BlackFridayWiring(unittest.TestCase):
         # sitemap is built from every index.html the build writes
         self.assertIn("OUT.rglob(\"index.html\")", self.src)
         self.assertIn("sitemap.xml", self.src)
+        # Footer and the deals page itself stay up after the promo hides
+        self.assertIn('<a href="/black-friday/">Black Friday deals</a>', self.src)
+        self.assertIn('write("/black-friday/"', self.src)
+        self.assertIn("bf_promo_parts()", self.src)
+        css = (ROOT / "static/site.css").read_text()
+        self.assertIn("html.bf-over .nav-bf", css)
+        self.assertIn("html.bf-over .bf-banner", css)
 
     def test_itemlist_structured_data(self):
         self.assertIn('"@type": "ItemList"', self.src)
