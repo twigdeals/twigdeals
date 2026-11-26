@@ -33,6 +33,11 @@ STORE_NAMES = {i: n for i, n, _, _ in STORES}
 # Beehiiv subscribe page. Change only here if the subdomain is renamed.
 BEEHIIV_BASE_URL = "https://twigdeals.beehiiv.com"
 BEEHIIV_SUBSCRIBE_URL = BEEHIIV_BASE_URL + "/subscribe"
+BEEHIIV_FORM_ID = "3323ff69-e1a2-409c-81fd-8fd7b133d5a0"
+BEEHIIV_EMBED_SCRIPT = (
+    f'<script async src="https://subscribe-forms.beehiiv.com/v3/loader.js" '
+    f'data-beehiiv-form="{BEEHIIV_FORM_ID}"></script>'
+)
 SITE = "Twig Deals"; TAGLINE = "Twig Deals: hockey stick price tracker"
 e = html.escape
 
@@ -183,21 +188,56 @@ def newtab(html):
         return tag
     return re.sub(r"<a\s[^>]*>", fix, html)
 
-def page(title, body, desc="", head=""):
+DS_EMBED_JS = """
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  document.querySelectorAll(".ds-embed").forEach(function(el){
+    function ready(){return !!el.querySelector("iframe,form")}
+    function hide(){var f=el.querySelector(".ds-fallback");if(f)f.hidden=true}
+    function show(){if(!ready()){var f=el.querySelector(".ds-fallback");if(f)f.hidden=false}}
+    if(ready()){hide();return}
+    var obs=new MutationObserver(function(){if(ready()){hide();obs.disconnect()}});
+    obs.observe(el,{childList:true,subtree:true});
+    setTimeout(function(){obs.disconnect();show()},4000);
+  });
+});
+</script>"""
+
+def page(title, body, desc="", head="", newsletter=True):
     # No hand-written Cloudflare Web Analytics <script> here on purpose: Cloudflare auto-injects
     # the beacon (zone twigdeals.com, site tag a73d3fc2...). A manual copy loads first, claims
     # window.__cfBeacon without a "version", and makes the beacon POST to
     # cloudflareinsights.com/cdn-cgi/rum, which 404s, so no visits get recorded.
     nav_bf, _, promo_js = bf_promo_parts()
+    nl = NEWSLETTER if newsletter else ""
     return newtab(f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(title)}</title><meta name="description" content="{e(desc or TAGLINE)}"><meta name="theme-color" content="#0E0F11"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta property="og:type" content="website"><meta property="og:site_name" content="Twig Deals"><meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc or TAGLINE)}"><meta property="og:image" content="https://twigdeals.com/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://twigdeals.com/og.png">
 <link rel="preload" href="/fonts/BarlowCondensed-800.woff2" as="font" type="font/woff2" crossorigin>{promo_js}{RHEAD}<link rel="stylesheet" href="/style.css?v={CSS_V}">{head}</head><body>
 <header class="top"><div class="w bar"><a class="logo" href="/">{LOGO}</a>{RTOGGLE}<nav><a href="/sticks/">Sticks</a><a href="/curves/">Curve + flex</a><a href="/pro-stock/">Pro stock</a>{nav_bf}<a href="/guides/when-do-hockey-sticks-go-on-sale/">Sale calendar</a><a href="/about/">About</a><a class="nav-cta" href="#newsletter">Weekly drops</a></nav></div></header>
-<main><p class="w rnote">Canadian stores list prices in CAD and ship to the US; on their sites US visitors may see different prices or stock.</p>{body}{NEWSLETTER}</main><footer><div class="w foot"><div>{LOGO}<p>Hockey stick price tracker. Prices are pulled from retailer sites twice a day and can change; confirm on the store page before you buy. Some links earn us a commission at no cost to you. CAD and USD are shown as listed, not converted.</p><p>Stores tracked: {e(", ".join(n for _, n, _, _ in STORES))}. Pro stock page (listed separately): Pro Stock Hockey, Pro Stock North America, North Prostock, plus pro stock from HockeyStickMan, Ice Warehouse, TheHockeyShop.com, Just Hockey and Hockey Monkey.</p></div><div class="flinks"><a href="/sticks/">All sticks</a><a href="/curves/">Curve + flex</a><a href="/pro-stock/">Pro stock</a><a href="/black-friday/">Black Friday deals</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">When sticks go on sale</a><a href="/about/">About + stores</a></div></div></footer></body></html>""")
+<main><p class="w rnote">Canadian stores list prices in CAD and ship to the US; on their sites US visitors may see different prices or stock.</p>{body}{nl}</main><footer><div class="w foot"><div>{LOGO}<p>Hockey stick price tracker. Prices are pulled from retailer sites twice a day and can change; confirm on the store page before you buy. Some links earn us a commission at no cost to you. CAD and USD are shown as listed, not converted.</p><p>Stores tracked: {e(", ".join(n for _, n, _, _ in STORES))}. Pro stock page (listed separately): Pro Stock Hockey, Pro Stock North America, North Prostock, plus pro stock from HockeyStickMan, Ice Warehouse, TheHockeyShop.com, Just Hockey and Hockey Monkey.</p></div><div class="flinks"><a href="/sticks/">All sticks</a><a href="/curves/">Curve + flex</a><a href="/pro-stock/">Pro stock</a><a href="/black-friday/">Black Friday deals</a><a href="/guides/when-do-hockey-sticks-go-on-sale/">When sticks go on sale</a><a href="/about/">About + stores</a></div></div></footer>""" + DS_EMBED_JS + "</body></html>")
+
+def ds_form():
+    # Official Beehiiv slim embed (free plan). Fallback link is hidden until the
+    # script fails to mount a form, and is always available in a <noscript> block.
+    link = f'<a href="{BEEHIIV_SUBSCRIBE_URL}" target="_blank" rel="noopener">Get the Drop Sheet</a>'
+    return (
+        f'<div class="ds-embed">{BEEHIIV_EMBED_SCRIPT}'
+        f'<p class="ds-fallback" hidden>{link}</p>'
+        f'<noscript><p class="ds-fallback">{link}</p></noscript>'
+        f'<p class="ds-fine">Free. Unsubscribe anytime.</p></div>'
+    )
+
+def ds_box(anchor=False):
+    nid = ' id="newsletter"' if anchor else ""
+    return (
+        f'<aside class="ds-box"{nid} aria-label="Get the Drop Sheet"><div class="ds-box-in">'
+        f'<div><p class="ds-kicker">Get the Drop Sheet</p>'
+        f'<p class="ds-copy">The best stick price drops from 11 US and Canadian stores, every Thursday.</p></div>'
+        f'{ds_form()}</div></aside>'
+    )
 
 NEWSLETTER = f"""<section class="nl" id="newsletter"><div class="w nl-in"><div><p class="kicker">Every Thursday</p><h2>The drop sheet.</h2><p>One email. The biggest real price cuts on senior and intermediate twigs, sorted by curve and flex. No fluff.</p></div>
-<!-- NEWSLETTER: Beehiiv free plan, no API. The subscribe page doesn't prefill ?email= (checked Oct 19, 2026), so this is a plain link. -->
-<div class="nl-cta"><a class="nl-btn" href="{BEEHIIV_SUBSCRIBE_URL}" rel="noopener">Get the drop sheet <span aria-hidden="true">→</span></a><p class="nl-fine">Free. Sign up on our Beehiiv page. Unsubscribe anytime.</p></div></div></section>"""
+<div class="nl-cta">{ds_form()}</div></div></section>"""
 
 def spark(vals, w=96, h=24):
     if len(vals) < 2: return '<span class="spark-na">1st check</span>'
@@ -416,6 +456,7 @@ def write_black_friday(live, last_ts, upd, hist):
 <p class="lede">In-stock retail sticks, ranked by real discount: the current price versus the store's list price or the highest price Twig Deals has tracked. Deals update twice a day through Black Friday and Cyber Monday (November 27 and November 30, 2026). Prices can change, so confirm on the store's own site before you buy.</p>
 <p class="meta bf-note">{n_deals} models have a {BF_MIN_PCT}%+ in-stock cut right now. Pro stock is listed separately on the <a href="/pro-stock/">pro stock page</a>. Sports Excellence is left out because we can't reliably tell what's in stock there. Price history starts in mid-October 2026, so &ldquo;highest tracked&rdquo; is the high since then, not a full-year regular price. Use the All / Canada / US toggle to filter stores.</p>
 <div class="chips">{chips}</div></div></section>
+<div class="w">{ds_box()}</div>
 {''.join(size_sections)}{sec_24}{sec_7}"""
 
     listed = bf_best(rows, "bf_pct", limit=24, drop_key="bf_drop")
@@ -616,7 +657,8 @@ def main():
         body = f'''<div class="w page"><p class="crumb"><a href="/sticks/">Sticks</a> / {e(b)}</p><div class="{'phead has-photo' if ph else 'phead'}"><div><p class="kicker">{e(b)}</p><h1>{e(m)}</h1>
 <p class="lede">Tracking {sum(1 for v in vl if not v["pro_stock"])} retail variants at {", ".join(stores) or "no retail store right now"}. New sticks and pro stock are kept separate, and lowest-ever counts new sticks only. {fxnote}</p>{ps_link(s, ps_by_model)}</div>{photo}</div>
 {rsw(figs_for(vl), figs_for([v for v in vl if v["currency"]=="CAD"]).replace("No stores", "No Canadian stores"), figs_for([v for v in vl if v["currency"]=="USD"]).replace("No stores", "No US stores"))}<h2 class="h2">Price history</h2>{chart(series)}<h2 class="h2">Every variant: senior first, cheapest in stock first</h2>
-<div class="tw"><table><thead><tr><th>Store</th><th>Size</th><th>Curve</th><th class="num">Flex</th><th>Hand</th><th class="num">Price</th><th class="num">Low</th><th>Stock</th><th></th></tr></thead><tbody>{tr}</tbody></table></div></div>'''
+<div class="tw"><table><thead><tr><th>Store</th><th>Size</th><th>Curve</th><th class="num">Flex</th><th>Hand</th><th class="num">Price</th><th class="num">Low</th><th>Stock</th><th></th></tr></thead><tbody>{tr}</tbody></table></div>
+{ds_box(anchor=True)}</div>'''
         desc = f"Current and lowest-ever prices for the {b} {m} hockey stick by curve, flex and hand."
         new = [v for v in vl if not v["pro_stock"]]
         # One Offer per store: its cheapest new (non-pro-stock) variant. Currency as the store lists it.
@@ -636,7 +678,7 @@ def main():
             ps = [float(o["price"]) for o in offers]
             prod["offers"] = {"@type": "AggregateOffer", "priceCurrency": curs.pop(), "lowPrice": f"{min(ps):.2f}", "highPrice": f"{max(ps):.2f}", "offerCount": len(offers), "offers": offers}
         elif offers: prod["offers"] = offers
-        write(f"/sticks/{s}/", page(f"{b} {m} price tracker: lowest price by curve & flex | {SITE}", body, desc, ld(prod)))
+        write(f"/sticks/{s}/", page(f"{b} {m} price tracker: lowest price by curve & flex | {SITE}", body, desc, ld(prod), newsletter=False))
 
     links = []
     for (c, f, sz), vl in sorted(combos.items()):
